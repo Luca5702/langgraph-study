@@ -1,0 +1,83 @@
+{
+  "current_lesson": "01",
+  "lessons": {
+    "01": {
+      "title": "第 1 课：Hello Graph —— LangGraph 的三要素：State / Node / Edge",
+      "notebook": "notebooks/01_hello_graph.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    },
+    "02": {
+      "title": "第 2 课：State 与 Reducer —— \"节点返回的更新如何合并进状态\"",
+      "notebook": "notebooks/02_state_reducers.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    },
+    "03": {
+      "title": "第 3 课：控制流 —— 条件边、循环、并行、Send(map-reduce)、Command",
+      "notebook": "notebooks/03_control_flow.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    },
+    "04": {
+      "title": "第 4 课：从零手写一个 ReAct Agent（LLM + 工具 + 循环）",
+      "notebook": "notebooks/04_agent_tools.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    },
+    "05": {
+      "title": "第 5 课：持久化与记忆 —— Checkpointer（短期/线程记忆）+ Store（长期/跨线程记忆）",
+      "notebook": "notebooks/05_persistence_memory.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    },
+    "06": {
+      "title": "第 6 课：Human-in-the-loop —— interrupt() 与 Command(resume=...)",
+      "notebook": "notebooks/06_human_in_the_loop.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    },
+    "07": {
+      "title": "第 7 课：时间旅行 —— Replay（重放）与 Fork（分叉）",
+      "notebook": "notebooks/07_time_travel.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    },
+    "08": {
+      "title": "第 8 课：流式输出 —— stream_mode、v2 统一格式、stream_events(v3)",
+      "notebook": "notebooks/08_streaming.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    },
+    "09": {
+      "title": "第 9 课：子图（Subgraph）与多智能体的基础",
+      "notebook": "notebooks/09_subgraphs.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    },
+    "10": {
+      "title": "第 10 课：Functional API —— @entrypoint + @task（不画图也能享受持久化/中断）",
+      "notebook": "notebooks/10_functional_api.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    },
+    "11": {
+      "title": "第 11 课：生产级特性 —— 重试、缓存、运行时上下文、容错恢复",
+      "notebook": "notebooks/11_production.ipynb",
+      "status": "not_started",
+      "updated_at": null,
+      "notes": []
+    }
+  },
+  "history": []
+}

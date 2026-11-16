@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<title>LangGraph 互动实验室</title>
+<script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+<style>
+  .tab-on { background: var(--primary); color: var(--primary-foreground); }
+  .node rect { transition: all .25s; }
+  pre { white-space: pre-wrap; word-break: break-all; }
+</style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased">
+<div class="max-w-5xl mx-auto p-4 space-y-4">
+  <header class="flex flex-wrap items-center justify-between gap-2">
+    <div>
+      <h1 class="text-xl font-semibold">🧪 LangGraph 互动实验室</h1>
+      <p class="text-xs text-[var(--muted-foreground)]">配套 ~/langgraph-study/lessons · 基于 langgraph 1.2.22</p>
+    </div>
+    <nav class="flex gap-1 text-sm" id="tabs">
+      <button data-tab="concepts" class="px-3 py-1.5 rounded-md border border-[var(--border)]">① 概念地图</button>
+      <button data-tab="sim" class="px-3 py-1.5 rounded-md border border-[var(--border)]">② 超步模拟器</button>
+      <button data-tab="reducer" class="px-3 py-1.5 rounded-md border border-[var(--border)]">③ Reducer 实验</button>
+      <button data-tab="quiz" class="px-3 py-1.5 rounded-md border border-[var(--border)]">④ 测验</button>
+    </nav>
+  </header>
+
+  <!-- ===================== 概念地图 ===================== -->
+  <section id="concepts" class="tab-panel space-y-3">
+    <div class="grid md:grid-cols-3 gap-3" id="conceptGrid"></div>
+  </section>
+
+  <!-- ===================== 模拟器 ===================== -->
+  <section id="sim" class="tab-panel hidden space-y-3">
+    <div class="flex flex-wrap items-center gap-2 text-sm">
+      <span class="text-[var(--muted-foreground)]">场景：</span>
+      <select id="scenario" class="bg-[var(--card)] border border-[var(--border)] rounded px-2 py-1"></select>
+      <button id="prev" class="px-3 py-1 rounded border border-[var(--border)]">◀ 上一步</button>
+      <button id="next" class="px-3 py-1 rounded tab-on">下一超步 ▶</button>
+      <button id="reset" class="px-3 py-1 rounded border border-[var(--border)]">重置</button>
+      <span id="stepLabel" class="font-mono text-xs text-[var(--muted-foreground)]"></span>
+    </div>
+    <div class="grid md:grid-cols-5 gap-3">
+      <div class="md:col-span-3 bg-[var(--card)] border border-[var(--border)] rounded-lg p-2">
+        <svg id="graphSvg" viewBox="0 0 520 330" class="w-full"></svg>
+        <p id="note" class="text-sm p-2 border-t border-[var(--card-border)]"></p>
+      </div>
+      <div class="md:col-span-2 space-y-3">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3">
+          <div class="text-xs text-[var(--muted-foreground)] mb-1">State（超步结束、reducer 合并后）</div>
+          <pre id="stateBox" class="text-xs font-mono text-[var(--code-foreground)]"></pre>
+        </div>
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3">
+          <div class="text-xs text-[var(--muted-foreground)] mb-1">Checkpoints（thread_id="demo"）</div>
+          <ol id="ckptBox" class="text-xs font-mono space-y-0.5"></ol>
+        </div>
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3">
+          <div class="text-xs text-[var(--muted-foreground)] mb-1">对应代码</div>
+          <pre id="codeBox" class="text-xs font-mono text-[var(--code-foreground)]"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Reducer 实验 ===================== -->
+  <section id="reducer" class="tab-panel hidden space-y-3">
+    <p class="text-sm text-[var(--muted-foreground)]">两个节点 <b>B</b> 和 <b>C</b> 在<b>同一个超步</b>并行运行，都写键 <code>items</code>。选择 reducer，看合并结果。</p>
+    <div class="grid md:grid-cols-3 gap-3 text-sm">
+      <label class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3 space-y-1 block">
+        <div class="text-xs text-[var(--muted-foreground)]">当前 state.items</div>
+        <input id="rOld" value='["a"]' class="w-full font-mono bg-transparent border border-[var(--border)] rounded px-2 py-1" />
+      </label>
+      <label class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3 space-y-1 block">
+        <div class="text-xs text-[var(--muted-foreground)]">节点 B 返回 {"items": ...}</div>
+        <input id="rB" value='["b"]' class="w-full font-mono bg-transparent border border-[var(--border)] rounded px-2 py-1" />
+        <label class="text-xs flex items-center gap-1"><input type="checkbox" id="rBOver" /> 用 Overwrite(...) 包裹</label>
+      </label>
+      <label class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3 space-y-1 block">
+        <div class="text-xs text-[var(--muted-foreground)]">节点 C 返回 {"items": ...}（留空 = C 不写）</div>
+        <input id="rC" value='["c"]' class="w-full font-mono bg-transparent border border-[var(--border)] rounded px-2 py-1" />
+      </label>
+    </div>
+    <div class="flex flex-wrap gap-2 text-sm" id="reducerBtns"></div>
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3">
+      <pre id="rDecl" class="text-xs font-mono text-[var(--code-foreground)] mb-2"></pre>
+      <div id="rOut" class="font-mono text-sm"></div>
+      <p id="rExplain" class="text-xs text-[var(--muted-foreground)] mt-2"></p>
+    </div>
+  </section>
+
+  <!-- ===================== 测验 ===================== -->
+  <section id="quiz" class="tab-panel hidden space-y-3">
+    <div class="flex items-center justify-between text-sm">
+      <span id="quizProgress" class="text-[var(--muted-foreground)]"></span>
+      <span id="quizScore" class="font-mono"></span>
+    </div>
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 space-y-3">
+      <div id="qText" class="font-medium"></div>
+      <pre id="qCode" class="text-xs font-mono text-[var(--code-foreground)] hidden bg-[var(--background)] p-2 rounded"></pre>
+      <div id="qOpts" class="space-y-2"></div>
+      <p id="qExplain" class="text-sm hidden border-t border-[var(--card-border)] pt-2"></p>
+      <div class="flex justify-end"><button id="qNext" class="px-3 py-1 rounded tab-on text-sm hidden">下一题 ▶</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+// ---------------- Tabs ----------------
+const tabs = document.querySelectorAll('#tabs button');
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('hidden', p.id !== id));
+  tabs.forEach(b => b.classList.toggle('tab-on', b.dataset.tab === id));
+}
+tabs.forEach(b => b.onclick = () => showTab(b.dataset.tab));
+showTab('concepts');
+
+// ---------------- Concepts ----------------
+const concepts = [
+  ['🧠 State', '共享黑板（TypedDict / dataclass / Pydantic）。节点只返回<b>要改的键</b>。', '02'],
+  ['🔀 Reducer', '<code>Annotated[list, operator.add]</code> 决定更新如何合并；无 reducer = 覆盖；<code>Overwrite</code> 绕过。', '02'],
+  ['⚙️ Node', '普通函数 <code>(state, runtime?) → dict | Command</code>。可设 retry_policy / cache_policy / defer。', '01 · 11'],
+  ['➡️ Edge', '普通边、条件边（路由函数）、多源边 <code>add_edge(["b","c"], "join")</code> 等待汇合。', '03'],
+  ['⏱️ Super-step', 'Pregel/BSP 模型：同一超步的节点并行执行，结束时统一合并；无节点触发即结束。', '03'],
+  ['📨 Send', '运行时动态扇出：<code>[Send("node", 自定义输入) ...]</code>，实现 map-reduce。', '03'],
+  ['🎯 Command', '节点内同时 <code>update</code> + <code>goto</code>；<code>graph=Command.PARENT</code> 跳出子图（handoff）；<code>resume</code> 恢复中断。', '03 · 06 · 09'],
+  ['💾 Checkpointer', '每个超步保存快照，按 <code>thread_id</code> 隔离。带来记忆、HITL、时间旅行、容错。', '05'],
+  ['🗄️ Store', '跨线程长期记忆，namespace 组织：<code>runtime.store.put/search</code>。', '05'],
+  ['✋ interrupt()', '暂停并把 payload 抛给调用方；<code>Command(resume=v)</code> 恢复，<b>节点会从头重跑</b>。', '06'],
+  ['⏪ Time travel', '<code>get_state_history</code> → 用旧 config <code>invoke(None, cfg)</code> 重放；<code>update_state</code> 分叉。', '07'],
+  ['🌊 Streaming', '<code>stream_mode</code>: values / updates / messages / custom…；<code>version="v2"</code>；<code>stream_events(version="v3")</code>。', '08'],
+  ['🧩 Subgraph', '编译好的图可作节点；共享键自动通信，否则在函数里手动转换。', '09'],
+  ['🧵 Functional API', '<code>@entrypoint</code> + <code>@task</code>：用普通 Python 控制流，同样有持久化与中断。', '10'],
+  ['🧰 Runtime context', '<code>context_schema</code> + <code>Runtime[Ctx]</code> 注入依赖（模型名、用户 id），不放进 state。', '05 · 11'],
+];
+document.getElementById('conceptGrid').innerHTML = concepts.map(([t, d, l]) => `
+  <div class="bg-[var(--card)] border border-[var(--border)] rounded-lg p-3 space-y-1">
+    <div class="flex justify-between items-center"><span class="font-semibold">${t}</span>
+    <span class="text-xs font-mono text-[var(--muted-foreground)]">课 ${l}</span></div>
+    <div class="text-sm text-[var(--muted-foreground)]">${d}</div>
+  </div>`).join('');
+
+// ---------------- Simulator ----------------
+const S = {
+  seq: {
+    name: '顺序执行（第1课）',
+    nodes: { START: [60, 165], greet: [200, 165], shout: [340, 165], END: [470, 165] },
+    edges: [['START', 'greet'], ['greet', 'shout'], ['shout', 'END']],
+    code: `builder.add_edge(START, "greet")\nbuilder.add_edge("greet", "shout")\nbuilder.add_edge("shout", END)\ngraph.invoke({"name": "LG"}, cfg)`,
+    steps: [
+      { active: ['START'], state: { name: 'LG' }, next: ['greet'], note: '输入写入 state（source=input，step=-1）。START 触发 greet。' },
+      { active: ['greet'], state: { name: 'LG', greeting: '你好, LG!' }, next: ['shout'], note: '超步 0：greet 运行，返回 {"greeting": ...}，合并进 state，保存检查点。' },
+      { active: ['shout'], state: { name: 'LG', greeting: '你好, LG!', shout: '你好, LG! !!!' }, next: [], note: '超步 1：shout 运行。没有节点再被触发 → 图结束（next=()）。' },
+    ],
+  },
+  par: {
+    name: '并行 fan-out / fan-in（第3课）',
+    nodes: { START: [50, 165], a: [160, 165], b: [290, 80], c: [290, 250], join: [410, 165], END: [490, 165] },
+    edges: [['START', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'join'], ['c', 'join'], ['join', 'END']],
+    code: `results: Annotated[list, operator.add]\n\nbuilder.add_edge("a", "b")\nbuilder.add_edge("a", "c")\nbuilder.add_edge(["b", "c"], "join")`,
+    steps: [
+      { active: ['START'], state: { results: [] }, next: ['a'], note: '输入写入。' },
+      { active: ['a'], state: { results: ['a'] }, next: ['b', 'c'], note: '超步 0：a 运行。a 有两条出边 → b 和 c 同时被触发。' },
+      { active: ['b', 'c'], state: { results: ['a', 'b', 'c'] }, next: ['join'], note: '超步 1：b、c <b>并行</b>执行；两份更新在超步结束时由 operator.add 合并（若无 reducer → InvalidUpdateError）。' },
+      { active: ['join'], state: { results: ['a', 'b', 'c', 'join'] }, next: [], note: '超步 2：b、c 都完成后，join 才运行（多源边 = 等待汇合）。' },
+    ],
+  },
+  react: {
+    name: 'ReAct Agent 循环（第4课）',
+    nodes: { START: [60, 165], llm: [210, 165], tools: [360, 70], END: [420, 260] },
+    edges: [['START', 'llm'], ['llm', 'tools', 'tools_condition'], ['tools', 'llm'], ['llm', 'END', 'tools_condition']],
+    code: `builder.add_conditional_edges("llm", tools_condition)\nbuilder.add_edge("tools", "llm")`,
+    steps: [
+      { active: ['START'], state: { messages: ['Human: 上海天气?'] }, next: ['llm'], note: '用户消息写入 messages（add_messages reducer）。' },
+      { active: ['llm'], state: { messages: ['Human: 上海天气?', 'AI: tool_calls=[get_weather(上海)]'] }, next: ['tools'], note: '超步 0：LLM 决定调用工具。tools_condition 看到 tool_calls → 路由到 tools。' },
+      { active: ['tools'], state: { messages: ['Human: 上海天气?', 'AI: tool_calls=[...]', 'Tool: 上海 小雨 16°C'] }, next: ['llm'], note: '超步 1：ToolNode 执行工具，追加 ToolMessage，固定边回到 llm。' },
+      { active: ['llm'], state: { messages: ['Human: 上海天气?', 'AI: tool_calls=[...]', 'Tool: 上海 小雨 16°C', 'AI: 上海今天小雨 16°C'] }, next: [], note: '超步 2：LLM 给出最终回答（无 tool_calls）→ END。这个"循环"就是 Agent 的本质。' },
+    ],
+  },
+  hitl: {
+    name: '人机协同 interrupt（第6课）',
+    nodes: { START: [50, 165], plan: [170, 165], review: [300, 165], execute: [430, 90], END: [470, 260] },
+    edges: [['START', 'plan'], ['plan', 'review'], ['review', 'execute', 'Command'], ['review', 'END', 'Command'], ['execute', 'END']],
+    code: `def review(state):\n    d = interrupt({"action": state["action"]})\n    return Command(goto="execute" if d["ok"] else END)\n\ngraph.invoke(inp, cfg)          # 暂停\ngraph.invoke(Command(resume={"ok": True}), cfg)`,
+    steps: [
+      { active: ['START'], state: { action: '删表' }, next: ['plan'], note: '输入写入。' },
+      { active: ['plan'], state: { action: '删表' }, next: ['review'], note: '超步 0：plan 运行。' },
+      { active: ['review'], paused: true, state: { action: '删表', __interrupt__: '[Interrupt(value={action:删表})]' }, next: ['review'], note: '超步 1：review 调用 interrupt() → <b>暂停</b>。检查点保存，next 仍是 review。invoke 返回 __interrupt__。进程可以退出，几天后再恢复都行。' },
+      { active: ['review'], state: { action: '备份表' }, next: ['execute'], note: '调用 Command(resume={ok:True, edited:"备份表"})：review <b>从头重跑</b>，这次 interrupt() 直接返回 resume 值，Command 跳转 execute。' },
+      { active: ['execute'], state: { action: '备份表', status: '✅ 已执行' }, next: [], note: '超步 2：execute 运行 → 结束。' },
+    ],
+  },
+};
+const sel = document.getElementById('scenario');
+sel.innerHTML = Object.entries(S).map(([k, v]) => `<option value="${k}">${v.name}</option>`).join('');
+let cur = 'seq', idx = 0;
+
+function draw() {
+  const sc = S[cur], st = sc.steps[idx];
+  const svg = document.getElementById('graphSvg');
+  const css = getComputedStyle(document.documentElement);
+  let h = `<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+     <path d="M0,0 L10,5 L0,10 z" fill="var(--muted-foreground)"/></marker></defs>`;
+  for (const [a, b, label] of sc.edges) {
+    const [x1, y1] = sc.nodes[a], [x2, y2] = sc.nodes[b];
+    const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+    const off = 34;
+    let sx = x1 + ux * off, sy = y1 + uy * 20, ex = x2 - ux * off, ey = y2 - uy * 20;
+    let path = `M${sx},${sy} L${ex},${ey}`;
+    if (cur === 'react' && a === 'tools' && b === 'llm') path = `M${x2 + 30},${y2 - 18} Q${x1 - 40},${y1 + 10} ${x2 + 34},${y2 - 6}`;
+    if (cur === 'react' && a === 'llm' && b === 'tools') path = `M${x1 + 20},${y1 - 20} Q${x1 + 30},${y2 - 10} ${x2 - 34},${y2}`;
+    h += `<path d="${path}" fill="none" stroke="var(--muted-foreground)" stroke-width="1.5" ${label ? 'stroke-dasharray="5 4"' : ''} marker-end="url(#arr)"/>`;
+    if (label) h += `<text x="${(x1 + x2) / 2 + 6}" y="${(y1 + y2) / 2 - 6}" font-size="11" fill="var(--muted-foreground)">${label}</text>`;
+  }
+  for (const [n, [x, y]] of Object.entries(sc.nodes)) {
+    const on = st.active.includes(n), special = n === 'START' || n === 'END', nxt = st.next.includes(n) && !on;
+    const fill = on ? (st.paused ? 'var(--warning)' : 'var(--primary)') : 'var(--card)';
+    const stroke = nxt ? 'var(--success)' : on ? fill : 'var(--border)';
+    h += `<g class="node"><rect x="${x - 34}" y="${y - 18}" width="68" height="36" rx="${special ? 18 : 8}" fill="${fill}" stroke="${stroke}" stroke-width="${nxt ? 3 : 1.5}" ${nxt ? 'stroke-dasharray="4 3"' : ''}/>
+      <text x="${x}" y="${y + 4}" text-anchor="middle" font-size="12" font-family="monospace" fill="${on ? 'var(--primary-foreground)' : 'var(--foreground)'}">${n}</text></g>`;
+  }
+  h += `<g font-size="11" fill="var(--muted-foreground)"><rect x="8" y="306" width="12" height="12" rx="2" fill="var(--primary)"/><text x="24" y="316">本超步执行</text>
+        <rect x="100" y="306" width="12" height="12" rx="2" fill="none" stroke="var(--success)" stroke-width="2" stroke-dasharray="3 2"/><text x="116" y="316">next（下一超步）</text>
+        <rect x="220" y="306" width="12" height="12" rx="2" fill="var(--warning)"/><text x="236" y="316">暂停 (interrupt)</text>
+        <line x1="330" y1="312" x2="352" y2="312" stroke="var(--muted-foreground)" stroke-dasharray="5 4"/><text x="356" y="316">条件/动态跳转</text></g>`;
+  svg.innerHTML = h;
+  document.getElementById('note').innerHTML = st.note;
+  document.getElementById('stateBox').textContent = JSON.stringify(st.state, null, 2);
+  document.getElementById('codeBox').textContent = sc.code;
+  document.getElementById('stepLabel').textContent = `step ${idx - 1} / ${sc.steps.length - 2}`;
+  document.getElementById('ckptBox').innerHTML = sc.steps.slice(0, idx + 1).map((s, i) =>
+    `<li class="${i === idx ? 'text-[var(--primary)] font-semibold' : 'text-[var(--muted-foreground)]'}">#${i} step=${i - 1} next=(${s.next.map(x => `'${x}'`).join(', ')})${s.paused ? ' ⏸' : ''}</li>`).join('');
+  document.getElementById('prev').disabled = idx === 0;
+  document.getElementById('next').disabled = idx === sc.steps.length - 1;
+  document.getElementById('next').style.opacity = idx === sc.steps.length - 1 ? .4 : 1;
+}
+sel.onchange = () => { cur = sel.value; idx = 0; draw(); };
+document.getElementById('next').onclick = () => { if (idx < S[cur].steps.length - 1) idx++; draw(); };
+document.getElementById('prev').onclick = () => { if (idx > 0) idx--; draw(); };
+document.getElementById('reset').onclick = () => { idx = 0; draw(); };
+window.addEventListener('themechange', draw);
+draw();
+
+// ---------------- Reducer lab ----------------
+const reducers = {
+  none: { label: '无 reducer（覆盖）', decl: 'items: list' },
+  add: { label: 'operator.add', decl: 'items: Annotated[list, operator.add]' },
+  set: { label: '自定义：去重并集', decl: 'def union(a, b): return sorted(set(a) | set(b))\nitems: Annotated[list, union]' },
+  max: { label: '自定义：取更长的', decl: 'def longer(a, b): return b if len(b) > len(a) else a\nitems: Annotated[list, longer]' },
+};
+let rSel = 'add';
+document.getElementById('reducerBtns').innerHTML = Object.entries(reducers).map(([k, v]) =>
+  `<button data-r="${k}" class="px-3 py-1 rounded border border-[var(--border)]">${v.label}</button>`).join('');
+document.querySelectorAll('#reducerBtns button').forEach(b => b.onclick = () => { rSel = b.dataset.r; runReducer(); });
+['rOld', 'rB', 'rC', 'rBOver'].forEach(id => document.getElementById(id).addEventListener('input', runReducer));
+
+function runReducer() {
+  document.querySelectorAll('#reducerBtns button').forEach(b => b.classList.toggle('tab-on', b.dataset.r === rSel));
+  document.getElementById('rDecl').textContent = 'class State(TypedDict):\n    ' + reducers[rSel].decl.replace(/\n/g, '\n    ');
+  const out = document.getElementById('rOut'), ex = document.getElementById('rExplain');
+  let old, b, c = null;
+  try {
+    old = JSON.parse(document.getElementById('rOld').value);
+    b = JSON.parse(document.getElementById('rB').value);
+    const cv = document.getElementById('rC').value.trim();
+    if (cv) c = JSON.parse(cv);
+  } catch (e) { out.innerHTML = '<span style="color:var(--error)">JSON 格式错误</span>'; ex.textContent = ''; return; }
+  const over = document.getElementById('rBOver').checked;
+  const writes = [b]; if (c !== null) writes.push(c);
+  if (over) {
+    out.innerHTML = `items = <b>${JSON.stringify(b)}</b>`;
+    ex.innerHTML = 'B 使用 <code>Overwrite</code>：绕过 reducer，直接设为 B 的值；同一超步中其他节点对该键的普通写入（C）被<b>丢弃</b>。若两个节点同时 Overwrite 同一键 → InvalidUpdateError。';
+    return;
+  }
+  const fn = {
+    add: (a, x) => a.concat(x),
+    set: (a, x) => [...new Set([...a, ...x])].sort(),
+    max: (a, x) => x.length > a.length ? x : a,
+  }[rSel];
+  if (rSel === 'none') {
+    if (writes.length > 1) {
+      out.innerHTML = `<span style="color:var(--error)">❌ InvalidUpdateError: At key 'items': Can receive only one value per step. Use an Annotated key to handle multiple values.</span>`;
+      ex.innerHTML = '没有 reducer 的键在同一超步只能被<b>一个</b>节点写入。把 C 留空试试，或换一个 reducer。';
+    } else {
+      out.innerHTML = `items = <b>${JSON.stringify(b)}</b>`;
+      ex.innerHTML = '只有 B 写入 → 直接覆盖旧值（last-write-wins）。';
+    }
+    return;
+  }
+  let v = old, trace = [JSON.stringify(old)];
+  for (const w of writes) { v = fn(v, w); trace.push(`→ reducer(…, ${JSON.stringify(w)}) = ${JSON.stringify(v)}`); }
+  out.innerHTML = `items = <b>${JSON.stringify(v)}</b>`;
+  ex.innerHTML = '合并过程：' + trace.join(' ') + '<br/>reducer 依次作用于本超步的每一个写入（顺序由任务顺序决定，好的 reducer 应尽量与顺序无关）。';
+}
+runReducer();
+
+// ---------------- Quiz ----------------
+const Q = [
+  { q: '节点函数应该返回什么？', o: ['完整的新 state', '只包含要更新的键的 dict（或 Command）', 'None 以外的任何值', '下一个节点的名字'], a: 1, e: '节点返回"部分更新"，未返回的键保持不变；更新经 reducer 合并。路由由边或 Command 决定。' },
+  { q: '两个并行节点同时写入一个没有 reducer 的键，会怎样？', o: ['后执行的覆盖先执行的', '自动拼接成列表', '抛出 InvalidUpdateError', '随机保留一个'], a: 2, e: '同一超步中，无 reducer 的通道只接受一个值。用 Annotated[..., reducer] 解决（第 3 课 B\'）。' },
+  { q: '要让多轮对话"记住"上下文，最少需要什么？', o: ['Store', 'checkpointer + 每次传相同 thread_id', '把历史写进 system prompt', 'RetryPolicy'], a: 1, e: 'checkpointer 按 thread_id 保存每个超步的快照，下一次 invoke 会从该线程最新状态继续。Store 是跨线程的长期记忆。' },
+  { q: '调用 Command(resume=...) 恢复 interrupt 时，包含 interrupt 的节点会：', o: ['从 interrupt 那一行继续', '从节点开头重新执行', '跳过该节点', '从图的 START 重新执行'], a: 1, e: '节点从头重跑，interrupt() 这一次直接返回 resume 值。所以 interrupt 之前的副作用必须幂等（第 6 课会打印两次）。' },
+  { q: '以下哪项不是 interrupt 的使用规则？', o: ['不要用 try/except 包住 interrupt', '同一节点内 interrupt 顺序不能变', 'interrupt 只能在图的最后一个节点调用', 'interrupt 前的副作用要幂等'], a: 2, e: 'interrupt 可以在任意节点、甚至工具函数内部调用。' },
+  { q: '想在运行时根据数据动态并行处理 N 个子任务（N 事先未知），应使用：', o: ['add_edge 多次', 'Send', 'RetryPolicy', '子图'], a: 1, e: '条件边返回 [Send("node", 输入) ...] 即可动态扇出，配合 reducer 汇总 = map-reduce。' },
+  { q: '下面代码输出的 history 是？', c: 'history: Annotated[list, operator.add]\n# 初始 ["init"]，节点 a 返回 {"history": ["a"]}\n# 节点 b 返回 {"history": Overwrite(["x"])}', o: ['["init","a","x"]', '["x"]', '["init","x"]', '报错'], a: 1, e: 'Overwrite 绕过 reducer 直接替换。' },
+  { q: 'Runtime context（context_schema）适合放什么？', o: ['会被节点修改的对话消息', '模型名、DB 连接、用户 id 等运行依赖', '检查点 id', '图的边'], a: 1, e: 'context 是只读的运行依赖，不进入 state、不被检查点保存为状态。通过 invoke(..., context={...}) 传入。' },
+  { q: '时间旅行中，"fork（分叉）"的正确做法是：', o: ['修改 get_state_history 返回的对象', 'update_state(历史config, 新值) 后 invoke(None, 新config)', '删除后续检查点', '重新 compile 图'], a: 1, e: 'update_state 在历史点上创建新检查点（分支），原历史不变（第 7 课）。' },
+  { q: 'stream_mode="updates" 与 "values" 的区别？', o: ['没有区别', 'updates 是每个节点的增量，values 是每个超步后的完整 state', 'updates 只在结束时输出', 'values 输出 LLM token'], a: 1, e: 'LLM token 用 "messages"；自定义进度用 "custom" + get_stream_writer()。' },
+  { q: '@task 在 Functional API 中最重要的作用是？', o: ['让函数变快', '结果被检查点记录，恢复/重放时不会重复执行', '自动生成图', '替代 LLM'], a: 1, e: '第 10 课：恢复后 parallel_seconds≈0，因为已完成的 task 结果直接从检查点读取。' },
+  { q: 'LangGraph、LangChain create_agent、Deep Agents 的关系是？', o: ['三者互不相关', 'LangGraph 是运行时；create_agent 与 Deep Agents 构建在它之上，抽象程度依次更高', 'Deep Agents 是 LangGraph 的底层', 'LangChain 是 LangGraph 的运行时'], a: 1, e: '官方说法：LangGraph = agent runtime，LangChain = agent framework，Deep Agents = agent harness。' },
+];
+let qi = 0, score = 0;
+function renderQ() {
+  const it = Q[qi];
+  document.getElementById('quizProgress').textContent = `第 ${qi + 1} / ${Q.length} 题`;
+  document.getElementById('quizScore').textContent = `得分 ${score}`;
+  document.getElementById('qText').textContent = it.q;
+  const code = document.getElementById('qCode');
+  code.classList.toggle('hidden', !it.c); code.textContent = it.c || '';
+  document.getElementById('qExplain').classList.add('hidden');
+  document.getElementById('qNext').classList.add('hidden');
+  const box = document.getElementById('qOpts');
+  box.innerHTML = it.o.map((o, i) => `<button data-i="${i}" class="w-full text-left px-3 py-2 rounded border border-[var(--border)] text-sm">${String.fromCharCode(65 + i)}. ${o}</button>`).join('');
+  box.querySelectorAll('button').forEach(b => b.onclick = () => {
+    const i = +b.dataset.i;
+    box.querySelectorAll('button').forEach(x => {
+      x.disabled = true;
+      if (+x.dataset.i === it.a) x.style.borderColor = 'var(--success)', x.style.borderWidth = '2px';
+    });
+    if (i === it.a) score++; else b.style.borderColor = 'var(--error)', b.style.borderWidth = '2px';
+    const ex = document.getElementById('qExplain');
+    ex.innerHTML = (i === it.a ? '✅ 正确！' : '❌ 不对。') + ' ' + it.e;
+    ex.classList.remove('hidden');
+    document.getElementById('quizScore').textContent = `得分 ${score}`;
+    const nb = document.getElementById('qNext');
+    nb.textContent = qi === Q.length - 1 ? '重新开始 ↺' : '下一题 ▶';
+    nb.classList.remove('hidden');
+  });
+}
+document.getElementById('qNext').onclick = () => { if (qi === Q.length - 1) { qi = 0; score = 0; } else qi++; renderQ(); };
+renderQ();
+</script>
+</body>
+</html>

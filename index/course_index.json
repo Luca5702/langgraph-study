@@ -1,0 +1,4532 @@
+{
+  "schema": "pageindex-tree-v1",
+  "total_docs": 47,
+  "docs": [
+    {
+      "doc_id": "lesson:01",
+      "kind": "lesson",
+      "title": "第 1 课：Hello Graph —— LangGraph 的三要素：State / Node / Edge",
+      "description": "核心心智模型： * State（状态）：一个共享的\"黑板\"，通常是 TypedDict。 * Node（节点）：普通 Python 函数，输入当前 state，返回 \"要更新的部分 state\"（dict）。",
+      "path": "lessons/01_hello_graph.py",
+      "notebook_path": "notebooks/01_hello_graph.ipynb",
+      "total_lines": 67,
+      "tree": [
+        {
+          "level": 2,
+          "title": "练习：",
+          "start_line": 65,
+          "end_line": 65,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "1. 新增一个节点 count，计算 greeting 的字符数，放在 greet 和 shout 之间。",
+          "start_line": 66,
+          "end_line": 66,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "2. 如果节点返回了一个 State 中不存在的键，会发生什么？试试看。",
+          "start_line": 67,
+          "end_line": 67,
+          "children": []
+        }
+      ]
+    },
+    {
+      "doc_id": "lesson:02",
+      "kind": "lesson",
+      "title": "第 2 课：State 与 Reducer —— \"节点返回的更新如何合并进状态\"",
+      "description": "* 默认行为：后写覆盖前写（last-write-wins）。 * Annotated[类型, reducer]：指定合并函数 reducer(旧值, 新值) -> 合并后的值。 - operator.add：列表拼接",
+      "path": "lessons/02_state_reducers.py",
+      "notebook_path": "notebooks/02_state_reducers.ipynb",
+      "total_lines": 145,
+      "tree": [
+        {
+          "level": 2,
+          "title": "A. 默认覆盖 vs operator.add",
+          "start_line": 23,
+          "end_line": 51,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "B. 自定义 reducer",
+          "start_line": 52,
+          "end_line": 71,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "C. 消息状态：add_messages / MessagesState",
+          "start_line": 72,
+          "end_line": 101,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "D. 输入 / 输出 / 私有 schema",
+          "start_line": 102,
+          "end_line": 142,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "练习：",
+          "start_line": 143,
+          "end_line": 143,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "1. 写一个 reducer，把 dict 做深度合并（merge）。",
+          "start_line": 144,
+          "end_line": 144,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "2. 两个并行节点同时写同一个\"没有 reducer\"的键，会报什么错？（提示：InvalidUpdateError，第 3 课验证）",
+          "start_line": 145,
+          "end_line": 145,
+          "children": []
+        }
+      ]
+    },
+    {
+      "doc_id": "lesson:03",
+      "kind": "lesson",
+      "title": "第 3 课：控制流 —— 条件边、循环、并行、Send(map-reduce)、Command",
+      "description": "LangGraph 的执行模型来自 Google Pregel / BSP： * 按 \"super-step（超步）\" 推进。每个超步里，所有被触发的节点\"并行\"执行； * 超步结束时，所有更新通过 reducer 合并进 state，然后决定下一批节点；",
+      "path": "lessons/03_control_flow.py",
+      "notebook_path": "notebooks/03_control_flow.ipynb",
+      "total_lines": 172,
+      "tree": [
+        {
+          "level": 2,
+          "title": "A. 条件边 + 循环：猜数字",
+          "start_line": 19,
+          "end_line": 55,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "B. 静态并行（fan-out / fan-in）",
+          "start_line": 56,
+          "end_line": 90,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "C. Send：动态 map-reduce（运行时才知道要分几份）",
+          "start_line": 91,
+          "end_line": 119,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "D. Command：在节点里\"同时\"更新状态 + 决定跳转（无需写条件边）",
+          "start_line": 120,
+          "end_line": 168,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "练习：",
+          "start_line": 169,
+          "end_line": 169,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "1. 给 B 加一个 \"d\" 节点，路径 a->b->d->join 与 a->c->join，join 会执行几次？",
+          "start_line": 170,
+          "end_line": 171,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "2. 用 Send 实现：把一段长文本切块 -> 并行统计字数 -> 汇总。",
+          "start_line": 172,
+          "end_line": 172,
+          "children": []
+        }
+      ]
+    },
+    {
+      "doc_id": "lesson:04",
+      "kind": "lesson",
+      "title": "第 4 课：从零手写一个 ReAct Agent（LLM + 工具 + 循环）",
+      "description": "Agent = 一个带循环的图： START -> llm --(有 tool_calls?)--> tools -> llm -> ... -> END \\--(没有)----------------------------> END",
+      "path": "lessons/04_agent_tools.py",
+      "notebook_path": "notebooks/04_agent_tools.ipynb",
+      "total_lines": 68,
+      "tree": [
+        {
+          "level": 2,
+          "title": "练习：",
+          "start_line": 65,
+          "end_line": 65,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "1. 新增一个工具 get_time(city)，并让假模型（fake_llm.py）识别 \"几点\"。",
+          "start_line": 66,
+          "end_line": 66,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "2. 用 stream_mode=\"updates\" 观察每一步是哪个节点产生了什么消息。",
+          "start_line": 67,
+          "end_line": 67,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "3. 装上真模型（见 fake_llm.py 顶部说明），对比行为。",
+          "start_line": 68,
+          "end_line": 68,
+          "children": []
+        }
+      ]
+    },
+    {
+      "doc_id": "lesson:05",
+      "kind": "lesson",
+      "title": "第 5 课：持久化与记忆 —— Checkpointer（短期/线程记忆）+ Store（长期/跨线程记忆）",
+      "description": "* Checkpointer：每个超步结束都保存一个 StateSnapshot（检查点）。 - 用 config={\"configurable\": {\"thread_id\": \"...\"}} 区分会话（线程）。 - 带来：多轮对话记忆、人机协同(interrupt)、时间旅行、容错恢复。",
+      "path": "lessons/05_persistence_memory.py",
+      "notebook_path": "notebooks/05_persistence_memory.ipynb",
+      "total_lines": 93,
+      "tree": [
+        {
+          "level": 2,
+          "title": "A. 短期记忆：一个会\"记得\"之前说过什么的聊天机器人",
+          "start_line": 23,
+          "end_line": 34,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "B. 长期记忆：Store + Runtime context（用户 id 通过 context 传入，不放进 state）",
+          "start_line": 35,
+          "end_line": 90,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "练习：",
+          "start_line": 91,
+          "end_line": 91,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "1. 用 graph.update_state(config, {...}) 手动往某个线程里塞一条消息。",
+          "start_line": 92,
+          "end_line": 92,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "2. 消息越来越多怎么办？阅读 docs/src/oss/langgraph/add-memory.mdx 中 \"trim / summarize\" 部分。",
+          "start_line": 93,
+          "end_line": 93,
+          "children": []
+        }
+      ]
+    },
+    {
+      "doc_id": "lesson:06",
+      "kind": "lesson",
+      "title": "第 6 课：Human-in-the-loop —— interrupt() 与 Command(resume=...)",
+      "description": "* 在节点内调用 interrupt(payload)：图暂停，payload 返回给调用方（result[\"__interrupt__\"]）。 * 调用方用 graph.invoke(Command(resume=value), config) 恢复； 恢复时该节点会\"从头重新执行\"，这一次 interrupt(...) 直接返回 value。",
+      "path": "lessons/06_human_in_the_loop.py",
+      "notebook_path": "notebooks/06_human_in_the_loop.ipynb",
+      "total_lines": 70,
+      "tree": [
+        {
+          "level": 2,
+          "title": "练习：",
+          "start_line": 67,
+          "end_line": 67,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "1. 在一个节点里连续调用两次 interrupt（先问姓名再问年龄），观察需要 resume 几次。",
+          "start_line": 68,
+          "end_line": 68,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "2. 把 interrupt 放到工具函数内部（工具里也能用！），实现\"调用敏感工具前需审批\"。",
+          "start_line": 69,
+          "end_line": 69,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "3. 阅读 docs/src/oss/langgraph/interrupts.mdx 中 \"Rules of interrupts\"。",
+          "start_line": 70,
+          "end_line": 70,
+          "children": []
+        }
+      ]
+    },
+    {
+      "doc_id": "lesson:07",
+      "kind": "lesson",
+      "title": "第 7 课：时间旅行 —— Replay（重放）与 Fork（分叉）",
+      "description": "因为每个超步都有检查点，你可以： * Replay：用历史上某个检查点的 config 调用 invoke(None, config)， 该检查点之前的步骤不再执行，从那里继续往后跑。",
+      "path": "lessons/07_time_travel.py",
+      "notebook_path": "notebooks/07_time_travel.ipynb",
+      "total_lines": 63,
+      "tree": [
+        {
+          "level": 2,
+          "title": "练习：",
+          "start_line": 61,
+          "end_line": 61,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "1. 找到 \"即将执行 polish\" 的检查点，fork 时把 draft 改掉，观察 write 是否会重跑。",
+          "start_line": 62,
+          "end_line": 62,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "2. update_state 有一个 as_node 参数，试着理解它的作用（决定\"下一个节点\"是谁）。",
+          "start_line": 63,
+          "end_line": 63,
+          "children": []
+        }
+      ]
+    },
+    {
+      "doc_id": "lesson:08",
+      "kind": "lesson",
+      "title": "第 8 课：流式输出 —— stream_mode、v2 统一格式、stream_events(v3)",
+      "description": "LangGraph 有两层流式 API： 1) graph.stream(..., stream_mode=..., version=\"v2\")   —— 原始事件 values   : 每个超步后的完整 state",
+      "path": "lessons/08_streaming.py",
+      "notebook_path": "notebooks/08_streaming.ipynb",
+      "total_lines": 75,
+      "tree": [
+        {
+          "level": 2,
+          "title": "练习：",
+          "start_line": 72,
+          "end_line": 72,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "1. 用 stream_mode=\"values\" 打印每个超步后的消息条数。",
+          "start_line": 73,
+          "end_line": 73,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "2. 结合第 6 课：stream_events 后检查 stream.interrupted / stream.interrupts。",
+          "start_line": 74,
+          "end_line": 74,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "3. 阅读 docs/src/oss/langgraph/event-streaming.mdx 的 \"Build your own projection\"。",
+          "start_line": 75,
+          "end_line": 75,
+          "children": []
+        }
+      ]
+    },
+    {
+      "doc_id": "lesson:09",
+      "kind": "lesson",
+      "title": "第 9 课：子图（Subgraph）与多智能体的基础",
+      "description": "两种用法： A. 共享状态键：把编译好的子图直接 add_node(subgraph)，父子通过同名键通信。 B. 不同 schema：在一个普通节点函数里调用 subgraph.invoke()，自己做输入/输出转换。",
+      "path": "lessons/09_subgraphs.py",
+      "notebook_path": "notebooks/09_subgraphs.ipynb",
+      "total_lines": 112,
+      "tree": [
+        {
+          "level": 2,
+          "title": "练习：",
+          "start_line": 110,
+          "end_line": 110,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "1. 给 parent_a 加 checkpointer，调用 get_state(cfg, subgraphs=True) 看子图状态。",
+          "start_line": 111,
+          "end_line": 111,
+          "children": []
+        },
+        {
+          "level": 2,
+          "title": "2. 阅读 repos/langgraph-101/notebooks 中的 multi-agent 示例。",
+          "start_line": 112,
+          "end_line": 112,
+          "children": []
+        }
+      ]
+    },
+    {
+      "doc_id": "lesson:10",
+      "kind": "lesson",
+      "title": "第 10 课：Functional API —— @entrypoint + @task（不画图也能享受持久化/中断）",
+      "description": "* @task：一个可被检查点记录的工作单元，调用返回 future，.result() 取值；可并行。 * @entrypoint(checkpointer=...)：工作流入口，用普通 Python 控制流（if/for/while）。 * 同样支持 interrupt()、Command(resume=...)、流式、previous（上一轮返回值）。",
+      "path": "lessons/10_functional_api.py",
+      "notebook_path": "notebooks/10_functional_api.ipynb",
+      "total_lines": 60,
+      "tree": [
+        {
+          "level": 2,
+          "title": "练习：把第 4 课的 ReAct agent 用 Functional API 重写（参考 docs/src/oss/langgraph/functional-api.mdx）。",
+          "start_line": 60,
+          "end_line": 60,
+          "children": []
+        }
+      ]
+    },
+    {
+      "doc_id": "lesson:11",
+      "kind": "lesson",
+      "title": "第 11 课：生产级特性 —— 重试、缓存、运行时上下文、容错恢复",
+      "description": "* RetryPolicy：节点抛异常时自动重试（指数退避）。 * CachePolicy + cache：相同输入的节点结果被缓存（可设 ttl）。 * Runtime[Context]：把\"依赖\"(模型名、DB 连接、用户 id) 注入节点，不污染 state。",
+      "path": "lessons/11_production.py",
+      "notebook_path": "notebooks/11_production.ipynb",
+      "total_lines": 116,
+      "tree": []
+    },
+    {
+      "doc_id": "doc:add-memory",
+      "kind": "official_doc",
+      "title": "Memory",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/add-memory.mdx",
+      "total_lines": 3015,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Add short-term memory",
+          "start_line": 11,
+          "children": [
+            {
+              "level": 3,
+              "title": "Use in production",
+              "start_line": 48,
+              "children": [],
+              "end_line": 635,
+              "summary": "In production, use a checkpointer backed by a database:"
+            },
+            {
+              "level": 3,
+              "title": "Use in subgraphs",
+              "start_line": 636,
+              "children": [],
+              "end_line": 708,
+              "summary": "If your graph contains [subgraphs](/oss/langgraph/use-subgraphs), you only need to provide the checkpointer when compili..."
+            }
+          ],
+          "end_line": 47,
+          "summary": "Short-term memory (thread-level [persistence](/oss/langgraph/persistence)) enables agents to track multi-turn conversati..."
+        },
+        {
+          "level": 2,
+          "title": "Add long-term memory",
+          "start_line": 709,
+          "children": [
+            {
+              "level": 3,
+              "title": "Access the store inside nodes",
+              "start_line": 736,
+              "children": [],
+              "end_line": 820,
+              "summary": "Once you compile a graph with a store, LangGraph automatically injects the store into your node functions. The recommend..."
+            },
+            {
+              "level": 3,
+              "title": "Use in production",
+              "start_line": 821,
+              "children": [],
+              "end_line": 1735,
+              "summary": "In production, use a store backed by a database:"
+            },
+            {
+              "level": 3,
+              "title": "Use semantic search",
+              "start_line": 1736,
+              "children": [],
+              "end_line": 2050,
+              "summary": "Enable semantic search in your graph's memory store to let graph agents search for items in the store by semantic simila..."
+            }
+          ],
+          "end_line": 735,
+          "summary": "Use long-term memory to store user-specific or application-specific data across conversations."
+        },
+        {
+          "level": 2,
+          "title": "Manage short-term memory",
+          "start_line": 2051,
+          "children": [
+            {
+              "level": 3,
+              "title": "Trim messages",
+              "start_line": 2063,
+              "children": [],
+              "end_line": 2220,
+              "summary": "Most LLMs have a maximum supported context window (denominated in tokens). One way to decide when to truncate messages i..."
+            },
+            {
+              "level": 3,
+              "title": "Delete messages",
+              "start_line": 2221,
+              "children": [],
+              "end_line": 2391,
+              "summary": "You can delete messages from the graph state to manage the message history. This is useful when you want to remove speci..."
+            },
+            {
+              "level": 3,
+              "title": "Summarize messages",
+              "start_line": 2392,
+              "children": [],
+              "end_line": 2681,
+              "summary": "The problem with trimming or removing messages, as shown above, is that you may lose information from culling of the mes..."
+            },
+            {
+              "level": 3,
+              "title": "Manage checkpoints",
+              "start_line": 2682,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "View thread state",
+                  "start_line": 2687,
+                  "children": [],
+                  "end_line": 2795,
+                  "summary": ""
+                },
+                {
+                  "level": 4,
+                  "title": "View the history of the thread",
+                  "start_line": 2796,
+                  "children": [],
+                  "end_line": 2991,
+                  "summary": ""
+                },
+                {
+                  "level": 4,
+                  "title": "Delete all checkpoints for a thread",
+                  "start_line": 2992,
+                  "children": [],
+                  "end_line": 3007,
+                  "summary": ""
+                }
+              ],
+              "end_line": 2686,
+              "summary": "You can view and delete the information stored by the checkpointer."
+            }
+          ],
+          "end_line": 2062,
+          "summary": "With [short-term memory](add-short-term-memory) enabled, a checkpointer persists graph state across turns within the sam..."
+        },
+        {
+          "level": 2,
+          "title": "Database management",
+          "start_line": 3008,
+          "children": [],
+          "end_line": 3015,
+          "summary": "If you are using any database-backed persistence implementation (such as Postgres, Redis, or Oracle) to store short and/..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:agentic-rag",
+      "kind": "official_doc",
+      "title": "Build a custom RAG agent with LangGraph",
+      "description": "Build a custom retrieval agent with LangGraph that decides when to search a vector store or respond directly.",
+      "path": "repos/docs/src/oss/langgraph/agentic-rag.mdx",
+      "total_lines": 634,
+      "tree": [
+        {
+          "level": 3,
+          "title": "Concepts",
+          "start_line": 50,
+          "children": [],
+          "end_line": 59,
+          "summary": "This tutorial covers the following concepts: - [Retrieval](/oss/deepagents/retrieval) using - [document loaders](/oss/in..."
+        },
+        {
+          "level": 2,
+          "title": "Setup",
+          "start_line": 60,
+          "children": [
+            {
+              "level": 3,
+              "title": "Set up LangSmith",
+              "start_line": 93,
+              "children": [],
+              "end_line": 118,
+              "summary": "RAG applications run retrieval and generation in sequence. When you run the examples in this tutorial, [LangSmith](/lang..."
+            }
+          ],
+          "end_line": 92,
+          "summary": "Install the required packages and set your API keys:"
+        },
+        {
+          "level": 2,
+          "title": "Preprocess documents",
+          "start_line": 119,
+          "children": [],
+          "end_line": 158,
+          "summary": "Use three posts from [Lilian Weng's blog](https://lilianweng.github.io/). Fetch page content with a minimal helper built..."
+        },
+        {
+          "level": 2,
+          "title": "Create a retriever tool",
+          "start_line": 159,
+          "children": [],
+          "end_line": 203,
+          "summary": "Index the split documents into a vector store for semantic search. Use an in-memory vector store and OpenAI embeddings: ..."
+        },
+        {
+          "level": 2,
+          "title": "Generate a query or respond",
+          "start_line": 204,
+          "children": [],
+          "end_line": 326,
+          "summary": "With the retriever tool ready, start building the agent as a LangGraph graph. In the [Graph API](/oss/langgraph/graph-ap..."
+        },
+        {
+          "level": 2,
+          "title": "Grade documents",
+          "start_line": 327,
+          "children": [],
+          "end_line": 426,
+          "summary": "A normal edge always sends the graph to the same next node. A [conditional edge](/oss/langgraph/graph-apiconditional-edg..."
+        },
+        {
+          "level": 2,
+          "title": "Rewrite the question",
+          "start_line": 427,
+          "children": [],
+          "end_line": 499,
+          "summary": "If the grader marks the retrieved documents as irrelevant, the graph should not answer from that context. Instead, rewri..."
+        },
+        {
+          "level": 2,
+          "title": "Generate an answer",
+          "start_line": 500,
+          "children": [],
+          "end_line": 577,
+          "summary": "When the grader accepts the retrieved documents, the graph moves to answer generation. This node is the classic RAG step..."
+        },
+        {
+          "level": 2,
+          "title": "Assemble the graph",
+          "start_line": 578,
+          "children": [],
+          "end_line": 615,
+          "summary": "Assemble the nodes and edges into a complete graph: - Start with generate_query_or_respond and determine whether to call..."
+        },
+        {
+          "level": 2,
+          "title": "Run the agentic RAG",
+          "start_line": 616,
+          "children": [],
+          "end_line": 627,
+          "summary": "Test the complete graph by running it with a question:"
+        },
+        {
+          "level": 2,
+          "title": "See also",
+          "start_line": 628,
+          "children": [],
+          "end_line": 634,
+          "summary": "- [Retrieval](/oss/langchain/retrieval) - [Graph API](/oss/langgraph/graph-api) - [Agents](/oss/langchain/agents) - [Bui..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:application-structure",
+      "kind": "official_doc",
+      "title": "Application structure",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/application-structure.mdx",
+      "total_lines": 162,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Key concepts",
+          "start_line": 13,
+          "children": [],
+          "end_line": 21,
+          "summary": "To deploy using LangSmith, the following information should be provided: 1. A [LangGraph configuration file](configurati..."
+        },
+        {
+          "level": 2,
+          "title": "File structure",
+          "start_line": 22,
+          "children": [],
+          "end_line": 82,
+          "summary": "Below are examples of directory structures for applications:"
+        },
+        {
+          "level": 2,
+          "title": "Configuration file",
+          "start_line": 83,
+          "children": [
+            {
+              "level": 3,
+              "title": "Examples",
+              "start_line": 93,
+              "children": [],
+              "end_line": 128,
+              "summary": " The dependencies involve a custom local package and the langchain_openai package.  A single graph will be loaded from t..."
+            }
+          ],
+          "end_line": 92,
+          "summary": "The langgraph.json file is a JSON file that specifies the dependencies, graphs, environment variables, and other setting..."
+        },
+        {
+          "level": 2,
+          "title": "Dependencies",
+          "start_line": 129,
+          "children": [],
+          "end_line": 151,
+          "summary": "A LangGraph application may depend on other Python packages. A LangGraph application may depend on other TypeScript/Java..."
+        },
+        {
+          "level": 2,
+          "title": "Graphs",
+          "start_line": 152,
+          "children": [],
+          "end_line": 157,
+          "summary": "Use the graphs key in the [LangGraph configuration file](configuration-file-concepts) to specify which graphs will be av..."
+        },
+        {
+          "level": 2,
+          "title": "Environment variables",
+          "start_line": 158,
+          "children": [],
+          "end_line": 162,
+          "summary": "If you're working with a deployed LangGraph application locally, you can configure environment variables in the env key ..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:backward-compatibility",
+      "kind": "official_doc",
+      "title": "Backward compatibility",
+      "description": "Update LangGraph graph code in production without breaking in-flight runs.",
+      "path": "repos/docs/src/oss/langgraph/backward-compatibility.mdx",
+      "total_lines": 167,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Technical compatibility",
+          "start_line": 20,
+          "children": [
+            {
+              "level": 3,
+              "title": "Recommended patterns",
+              "start_line": 32,
+              "children": [],
+              "end_line": 62,
+              "summary": "- Add new state fields as NotRequired (or Optional[...] = None) so old checkpoints still validate: - Treat removals as d..."
+            },
+            {
+              "level": 3,
+              "title": "Detecting in-flight threads",
+              "start_line": 63,
+              "children": [],
+              "end_line": 88,
+              "summary": "Before you remove a node, rename a State key, or otherwise make a change that older threads cannot tolerate, you want to..."
+            }
+          ],
+          "end_line": 31,
+          "summary": "Technical compatibility is the equivalent of an API breaking change in a microservice. The \"API\" here is the contract be..."
+        },
+        {
+          "level": 2,
+          "title": "Business compatibility",
+          "start_line": 89,
+          "children": [],
+          "end_line": 151,
+          "summary": "Sometimes a change is technically valid (every existing checkpoint still loads and every node still resolves), but the m..."
+        },
+        {
+          "level": 2,
+          "title": "Non-determinism",
+          "start_line": 152,
+          "children": [],
+          "end_line": 167,
+          "summary": "This category only applies to the [Functional API](/oss/langgraph/functional-api) and to [tasks](/oss/langgraph/function..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:case-studies",
+      "kind": "official_doc",
+      "title": "Case studies",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/case-studies.mdx",
+      "total_lines": 50,
+      "tree": []
+    },
+    {
+      "doc_id": "doc:changelog-js",
+      "kind": "official_doc",
+      "title": "Changelog",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/changelog-js.mdx",
+      "total_lines": 5,
+      "tree": []
+    },
+    {
+      "doc_id": "doc:changelog-py",
+      "kind": "official_doc",
+      "title": "Changelog",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/changelog-py.mdx",
+      "total_lines": 5,
+      "tree": []
+    },
+    {
+      "doc_id": "doc:checkpointers",
+      "kind": "official_doc",
+      "title": "Checkpointers",
+      "description": "LangGraph checkpointers save graph state as checkpoints at each step, enabling persistence, human-in-the-loop, and fault-tolerant execution.",
+      "path": "repos/docs/src/oss/langgraph/checkpointers.mdx",
+      "total_lines": 1255,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Why use checkpointers",
+          "start_line": 20,
+          "children": [],
+          "end_line": 30,
+          "summary": "Checkpointers are required for the following features: - Human-in-the-loop: Checkpointers facilitate [human-in-the-loop ..."
+        },
+        {
+          "level": 2,
+          "title": "Core concepts",
+          "start_line": 31,
+          "children": [
+            {
+              "level": 3,
+              "title": "Threads",
+              "start_line": 33,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Choose how to continue a thread",
+                  "start_line": 59,
+                  "children": [],
+                  "end_line": 88,
+                  "summary": "The thread_id identifies saved state. The input and checkpoint_id determine whether an invocation starts new work, resum..."
+                }
+              ],
+              "end_line": 58,
+              "summary": "A thread is a unique ID or thread identifier assigned to each checkpoint saved by a checkpointer. It contains the accumu..."
+            },
+            {
+              "level": 3,
+              "title": "Checkpoints",
+              "start_line": 89,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Super-steps",
+                  "start_line": 93,
+                  "children": [],
+                  "end_line": 196,
+                  "summary": "LangGraph creates a checkpoint at each super-step boundary. A super-step is a single \"tick\" of the graph where all nodes..."
+                },
+                {
+                  "level": 4,
+                  "title": "Checkpoint namespace",
+                  "start_line": 197,
+                  "children": [],
+                  "end_line": 228,
+                  "summary": "Each checkpoint has a checkpoint_ns (checkpoint namespace) field that identifies which graph or subgraph it belongs to: ..."
+                }
+              ],
+              "end_line": 92,
+              "summary": "The state of a thread at a particular point in time is called a checkpoint. A checkpoint is a snapshot of the graph stat..."
+            }
+          ],
+          "end_line": 32,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "Get and update state",
+          "start_line": 229,
+          "children": [
+            {
+              "level": 3,
+              "title": "Get state",
+              "start_line": 231,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "StateSnapshot fields",
+                  "start_line": 314,
+                  "children": [],
+                  "end_line": 343,
+                  "summary": "| Field | Type | Description | |-------|------|-------------| | values | dict | State channel values at this checkpoint...."
+                }
+              ],
+              "end_line": 313,
+              "summary": "When interacting with the saved graph state, you must specify a [thread identifier](threads). You can view the _latest_ ..."
+            },
+            {
+              "level": 3,
+              "title": "Get state history",
+              "start_line": 344,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Find a specific checkpoint",
+                  "start_line": 537,
+                  "children": [],
+                  "end_line": 584,
+                  "summary": "You can filter the state history to find checkpoints matching specific criteria:"
+                },
+                {
+                  "level": 4,
+                  "title": "List every thread",
+                  "start_line": 585,
+                  "children": [],
+                  "end_line": 613,
+                  "summary": "To see every thread a checkpointer holds state for, for example, to build an admin or debugging view, omit thread_id whe..."
+                }
+              ],
+              "end_line": 536,
+              "summary": "You can get the full history of the graph execution for a given thread by calling @[graph.get_state_history(config)][get..."
+            },
+            {
+              "level": 3,
+              "title": "Replay",
+              "start_line": 614,
+              "children": [],
+              "end_line": 621,
+              "summary": "Replay re-executes steps from a prior checkpoint. Invoke the graph with a prior checkpoint_id to re-run nodes after that..."
+            },
+            {
+              "level": 3,
+              "title": "Update state",
+              "start_line": 622,
+              "children": [],
+              "end_line": 637,
+              "summary": "You can edit the graph state using @[update_state]. This creates a new checkpoint with the updated values — it does not ..."
+            }
+          ],
+          "end_line": 230,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "Durability modes",
+          "start_line": 638,
+          "children": [
+            {
+              "level": 3,
+              "title": "First durable checkpoint on a new thread",
+              "start_line": 673,
+              "children": [],
+              "end_line": 699,
+              "summary": "For a new thread, the durability mode also determines which checkpoints are committed before the first user node execute..."
+            }
+          ],
+          "end_line": 672,
+          "summary": "LangGraph supports three durability modes that let you balance performance and data consistency. You can specify the dur..."
+        },
+        {
+          "level": 2,
+          "title": "Optimize checkpoint storage",
+          "start_line": 700,
+          "children": [],
+          "end_line": 711,
+          "summary": "By default, LangGraph checkpoints write the full value of every state channel at each super-step. For long-running threa..."
+        },
+        {
+          "level": 2,
+          "title": "Checkpointer libraries",
+          "start_line": 712,
+          "children": [
+            {
+              "level": 3,
+              "title": "Checkpointer interface",
+              "start_line": 736,
+              "children": [],
+              "end_line": 763,
+              "summary": "Each checkpointer conforms to @[BaseCheckpointSaver] interface and implements the following methods:  .put - Store a che..."
+            },
+            {
+              "level": 3,
+              "title": "Serializer",
+              "start_line": 764,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Serialization with `pickle`",
+                  "start_line": 770,
+                  "children": [],
+                  "end_line": 786,
+                  "summary": "The default serializer, @[JsonPlusSerializer], uses ormsgpack and JSON under the hood, which is not suitable for all typ..."
+                },
+                {
+                  "level": 4,
+                  "title": "Encryption",
+                  "start_line": 787,
+                  "children": [],
+                  "end_line": 813,
+                  "summary": "Checkpointers can optionally encrypt all persisted state. To enable this, pass an instance of @[EncryptedSerializer] to ..."
+                }
+              ],
+              "end_line": 769,
+              "summary": "When checkpointers save the graph state, they need to serialize the channel values in the state. This is done using seri..."
+            }
+          ],
+          "end_line": 735,
+          "summary": "Under the hood, checkpointing is powered by checkpointer objects that conform to @[BaseCheckpointSaver] interface. LangG..."
+        },
+        {
+          "level": 2,
+          "title": "Build a custom checkpointer",
+          "start_line": 814,
+          "children": [
+            {
+              "level": 3,
+              "title": "Overview",
+              "start_line": 824,
+              "children": [],
+              "end_line": 832,
+              "summary": "LangGraph's persistence layer is built on two storage abstractions: - Checkpoints table — one row per superstep; stores ..."
+            },
+            {
+              "level": 3,
+              "title": "Base contract",
+              "start_line": 833,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "put / aput",
+                  "start_line": 886,
+                  "children": [],
+                  "end_line": 919,
+                  "summary": "Store one checkpoint row. Return an updated config with the stored checkpoint_id. Key requirements: - Serialize the chec..."
+                },
+                {
+                  "level": 4,
+                  "title": "put_writes / aput_writes",
+                  "start_line": 920,
+                  "children": [],
+                  "end_line": 941,
+                  "summary": "Store node-output rows for a single task within the current superstep. These rows are linked to the checkpoint by (threa..."
+                },
+                {
+                  "level": 4,
+                  "title": "get_tuple / aget_tuple",
+                  "start_line": 942,
+                  "children": [],
+                  "end_line": 1016,
+                  "summary": "Retrieve a checkpoint. The config may contain: - No checkpoint_id — return the latest checkpoint for the thread + namesp..."
+                },
+                {
+                  "level": 4,
+                  "title": "list / alist",
+                  "start_line": 1017,
+                  "children": [],
+                  "end_line": 1020,
+                  "summary": "Return checkpoints for a thread, newest first. Respect before (return only checkpoints older than that config's checkpoi..."
+                },
+                {
+                  "level": 4,
+                  "title": "delete_thread / adelete_thread",
+                  "start_line": 1021,
+                  "children": [],
+                  "end_line": 1024,
+                  "summary": "Delete all checkpoints and writes for a thread. Both checkpoint rows and write rows must be deleted."
+                }
+              ],
+              "end_line": 885,
+              "summary": "Subclass BaseCheckpointSaver and implement these five methods. All are required — a missing base method raises NotImplem..."
+            },
+            {
+              "level": 3,
+              "title": "Row key / index design",
+              "start_line": 1025,
+              "children": [],
+              "end_line": 1060,
+              "summary": "How you store and index checkpoints directly affects correctness and performance. Recommended schema (SQL):"
+            },
+            {
+              "level": 3,
+              "title": "Serialization",
+              "start_line": 1061,
+              "children": [],
+              "end_line": 1070,
+              "summary": "Always use self.serde (inherited from BaseCheckpointSaver, defaults to JsonPlusSerializer) for checkpoints, writes, and ..."
+            },
+            {
+              "level": 3,
+              "title": "Extended capabilities",
+              "start_line": 1071,
+              "children": [],
+              "end_line": 1083,
+              "summary": "These methods are optional but unlock additional Agent Server features. Implement them if your storage backend can suppo..."
+            },
+            {
+              "level": 3,
+              "title": "Delta channel support",
+              "start_line": 1084,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "What the runtime needs",
+                  "start_line": 1092,
+                  "children": [],
+                  "end_line": 1100,
+                  "summary": "When loading a checkpoint whose delta channels are absent from channel_values, LangGraph calls saver.get_delta_channel_h..."
+                },
+                {
+                  "level": 4,
+                  "title": "Default implementation",
+                  "start_line": 1101,
+                  "children": [],
+                  "end_line": 1134,
+                  "summary": "BaseCheckpointSaver provides a default get_delta_channel_history that works with any correct get_tuple implementation:"
+                },
+                {
+                  "level": 4,
+                  "title": "Performance override",
+                  "start_line": 1135,
+                  "children": [],
+                  "end_line": 1211,
+                  "summary": "The default walk issues one get_tuple call per ancestor checkpoint. For backends with good query support, override get_d..."
+                },
+                {
+                  "level": 4,
+                  "title": "Pruning with delta channels",
+                  "start_line": 1212,
+                  "children": [],
+                  "end_line": 1221,
+                  "summary": "DeltaChannel state is not self-contained in a single checkpoint — it depends on the ancestor write chain back to the nea..."
+                },
+                {
+                  "level": 4,
+                  "title": "Copy thread with delta channels",
+                  "start_line": 1222,
+                  "children": [],
+                  "end_line": 1225,
+                  "summary": "When implementing copy_thread, copy the complete ancestor chain — not just the head checkpoint. The target thread must h..."
+                }
+              ],
+              "end_line": 1091,
+              "summary": "DeltaChannel is in beta. The API and on-disk representation may change while the design stabilizes. DeltaChannel is a re..."
+            },
+            {
+              "level": 3,
+              "title": "Testing with the conformance suite",
+              "start_line": 1226,
+              "children": [],
+              "end_line": 1255,
+              "summary": "langgraph-checkpoint-conformance validates your implementation against the full contract, including delta channel histor..."
+            }
+          ],
+          "end_line": 823,
+          "summary": "Validate your implementation as you build using the [conformance test suite](testing-with-the-conformance-suite). It cov..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:deploy",
+      "kind": "official_doc",
+      "title": "Deployment",
+      "description": "Deploy LangGraph agents to production with LangSmith Cloud or JavaScript frameworks and hosting platforms.",
+      "path": "repos/docs/src/oss/langgraph/deploy.mdx",
+      "total_lines": 156,
+      "tree": [
+        {
+          "level": 2,
+          "title": "LangSmith Cloud",
+          "start_line": 21,
+          "children": [
+            {
+              "level": 3,
+              "title": "Prerequisites",
+              "start_line": 25,
+              "children": [],
+              "end_line": 31,
+              "summary": "Before you begin, ensure you have the following: - A [GitHub account](https://github.com/) - A [LangSmith account](https..."
+            },
+            {
+              "level": 3,
+              "title": "Deploy your agent",
+              "start_line": 32,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "1. Create a repository on GitHub",
+                  "start_line": 34,
+                  "children": [],
+                  "end_line": 38,
+                  "summary": "Your application's code must reside in a GitHub repository to be deployed on LangSmith. Both public and private reposito..."
+                },
+                {
+                  "level": 4,
+                  "title": "2. Deploy to LangSmith",
+                  "start_line": 39,
+                  "children": [],
+                  "end_line": 55,
+                  "summary": "Log in to [LangSmith](https://smith.langchain.com). In the left sidebar, select Agent Servers. Click the + Agent Server ..."
+                },
+                {
+                  "level": 4,
+                  "title": "3. Test your application in Studio",
+                  "start_line": 56,
+                  "children": [],
+                  "end_line": 64,
+                  "summary": "Once your application is deployed: 1. Select the Agent Server you just created to view more details. 2. Click the Studio..."
+                },
+                {
+                  "level": 4,
+                  "title": "4. Get the API URL for your Agent Server",
+                  "start_line": 65,
+                  "children": [],
+                  "end_line": 68,
+                  "summary": "In the Agent Server details view in LangSmith, find the URL row. Click Copy Agent Server URL to copy the address to your..."
+                },
+                {
+                  "level": 4,
+                  "title": "5. Test the API",
+                  "start_line": 69,
+                  "children": [],
+                  "end_line": 156,
+                  "summary": "You can now test the API: 1. Install LangGraph SDK: 2. Send a message to the agent:"
+                }
+              ],
+              "end_line": 33,
+              "summary": ""
+            }
+          ],
+          "end_line": 24,
+          "summary": "This section walks through deploying your agent to LangSmith Cloud from a GitHub repository. LangSmith handles infrastru..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:event-streaming",
+      "kind": "official_doc",
+      "title": "Event streaming",
+      "description": "Stream LangGraph runs with typed projections for messages, state, subgraphs, output, and extensions.",
+      "path": "repos/docs/src/oss/langgraph/event-streaming.mdx",
+      "total_lines": 843,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Quickstart",
+          "start_line": 8,
+          "children": [],
+          "end_line": 42,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "How the pieces fit together",
+          "start_line": 43,
+          "children": [],
+          "end_line": 85,
+          "summary": "The streaming stack has two main layers: 1. Streaming emits raw graph execution events from the Pregel engine. 2. Event ..."
+        },
+        {
+          "level": 2,
+          "title": "What event streaming provides",
+          "start_line": 86,
+          "children": [],
+          "end_line": 104,
+          "summary": "The run stream exposes typed projections over one underlying event flow: | Projection | Use | | ---------- | --- | | str..."
+        },
+        {
+          "level": 2,
+          "title": "Stream messages",
+          "start_line": 105,
+          "children": [],
+          "end_line": 145,
+          "summary": "Use stream.messages for chat model output:"
+        },
+        {
+          "level": 2,
+          "title": "Stream subgraphs",
+          "start_line": 146,
+          "children": [],
+          "end_line": 179,
+          "summary": "Use stream.subgraphs to observe nested graph work without parsing namespace strings:"
+        },
+        {
+          "level": 2,
+          "title": "Stream state",
+          "start_line": 180,
+          "children": [],
+          "end_line": 206,
+          "summary": "Use stream.values to stream full state snapshots after each step:"
+        },
+        {
+          "level": 2,
+          "title": "Stream multiple projections",
+          "start_line": 207,
+          "children": [],
+          "end_line": 261,
+          "summary": "For concurrent consumption in async code, use astream_events with asyncio.gather:"
+        },
+        {
+          "level": 2,
+          "title": "Resume after an interrupt",
+          "start_line": 262,
+          "children": [],
+          "end_line": 309,
+          "summary": "When a graph pauses for human input, inspect stream.interrupted and stream.interrupts, then resume by calling stream_eve..."
+        },
+        {
+          "level": 2,
+          "title": "Stream all protocol events",
+          "start_line": 310,
+          "children": [],
+          "end_line": 373,
+          "summary": "Use the run object itself when you want the raw protocol event stream:"
+        },
+        {
+          "level": 2,
+          "title": "Channels and event lifecycle",
+          "start_line": 374,
+          "children": [
+            {
+              "level": 3,
+              "title": "Messages",
+              "start_line": 393,
+              "children": [],
+              "end_line": 460,
+              "summary": "The messages channel models output as content blocks. The data's event field is one of: - message-start - content-block-..."
+            },
+            {
+              "level": 3,
+              "title": "Tools",
+              "start_line": 461,
+              "children": [],
+              "end_line": 471,
+              "summary": "The tools channel exposes tool execution. The data's event field is one of: - tool-started - tool-output-delta - tool-fi..."
+            },
+            {
+              "level": 3,
+              "title": "Lifecycle",
+              "start_line": 472,
+              "children": [],
+              "end_line": 483,
+              "summary": "The lifecycle channel tracks root run, subgraph, and subagent status. The data's event field is one of: - started - runn..."
+            }
+          ],
+          "end_line": 392,
+          "summary": "Raw events flow on channels. The channel name appears as the event's method; each channel emits a specific event shape. ..."
+        },
+        {
+          "level": 2,
+          "title": "Build your own projection",
+          "start_line": 484,
+          "children": [
+            {
+              "level": 3,
+              "title": "How transformers work",
+              "start_line": 492,
+              "children": [],
+              "end_line": 512,
+              "summary": "Event streaming starts with streaming output from the LangGraph Pregel engine. The runtime normalizes those chunks into ..."
+            },
+            {
+              "level": 3,
+              "title": "Transformer shape",
+              "start_line": 513,
+              "children": [],
+              "end_line": 552,
+              "summary": "A transformer implements the StreamTransformer interface:"
+            },
+            {
+              "level": 3,
+              "title": "Declaring required stream modes",
+              "start_line": 553,
+              "children": [],
+              "end_line": 570,
+              "summary": "required_stream_modes controls which Pregel stream modes the underlying graph emits during the stream. The runtime takes..."
+            },
+            {
+              "level": 3,
+              "title": "StreamChannel",
+              "start_line": 571,
+              "children": [],
+              "end_line": 592,
+              "summary": "StreamChannel is the projection primitive a transformer uses for streaming values. It always exposes an iterable stream ..."
+            },
+            {
+              "level": 3,
+              "title": "Example: named channel",
+              "start_line": 593,
+              "children": [],
+              "end_line": 659,
+              "summary": "Pass a string name to StreamChannel to expose a streaming projection through stream.extensions and forward each pushed v..."
+            },
+            {
+              "level": 3,
+              "title": "Example: unnamed channel",
+              "start_line": 660,
+              "children": [],
+              "end_line": 720,
+              "summary": "Without a name, the channel is a side-channel projection only — accessible on stream.extensions but not visible to consu..."
+            },
+            {
+              "level": 3,
+              "title": "Example: final-value projection",
+              "start_line": 721,
+              "children": [],
+              "end_line": 777,
+              "summary": "Use unnamed streams, promises, or other in-process objects when the projection should not flow into the main event strea..."
+            },
+            {
+              "level": 3,
+              "title": "Register at call time or compile time",
+              "start_line": 778,
+              "children": [],
+              "end_line": 818,
+              "summary": "Pass transformers at call time for local experimentation:"
+            },
+            {
+              "level": 3,
+              "title": "Built-in: `ToolCallTransformer`",
+              "start_line": 819,
+              "children": [],
+              "end_line": 833,
+              "summary": "LangGraph ships ToolCallTransformer as a built-in. Register it to expose stream.tool_calls on a plain StateGraph:"
+            }
+          ],
+          "end_line": 491,
+          "summary": "Stream transformers are the projection layer in event streaming. They observe protocol events, keep their own state, and..."
+        },
+        {
+          "level": 2,
+          "title": "Related",
+          "start_line": 834,
+          "children": [],
+          "end_line": 843,
+          "summary": "LangGraph defines the streaming primitives. For using streaming with LangChain or Deep Agents, review the relevant produ..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:fault-tolerance",
+      "kind": "official_doc",
+      "title": "Fault tolerance",
+      "description": "Configure per-node timeouts, retries, error handlers, and recovery strategies in LangGraph.",
+      "path": "repos/docs/src/oss/langgraph/fault-tolerance.mdx",
+      "total_lines": 1442,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Retries",
+          "start_line": 64,
+          "children": [
+            {
+              "level": 3,
+              "title": "Default behavior",
+              "start_line": 94,
+              "children": [],
+              "end_line": 130,
+              "summary": "By default, retry_on uses default_retry_on, which retries on any exception except the following (and their subclasses): ..."
+            },
+            {
+              "level": 3,
+              "title": "Parameters",
+              "start_line": 131,
+              "children": [],
+              "end_line": 155,
+              "summary": "| Parameter | Type | Default | Description | | --------- | ---- | ------- | ----------- | | max_attempts | int | 3 | Max..."
+            },
+            {
+              "level": 3,
+              "title": "Custom retry logic",
+              "start_line": 156,
+              "children": [],
+              "end_line": 199,
+              "summary": "Pass a callable or exception type to retry_on. Import default_retry_on to extend the default behavior:"
+            },
+            {
+              "level": 3,
+              "title": "Inspect retry state",
+              "start_line": 200,
+              "children": [],
+              "end_line": 276,
+              "summary": "Use execution info inside a node to inspect the current attempt number. This is useful for switching to a fallback when ..."
+            }
+          ],
+          "end_line": 93,
+          "summary": "A retry policy automatically re-runs a failed node attempt based on exception type and backoff settings. Pass retry_poli..."
+        },
+        {
+          "level": 2,
+          "title": "Retry boundaries and idempotency",
+          "start_line": 277,
+          "children": [
+            {
+              "level": 3,
+              "title": "Protect side effects with an idempotency key",
+              "start_line": 290,
+              "children": [],
+              "end_line": 372,
+              "summary": "Send a stable idempotency key with the side effect so the provider can deduplicate retries. The key must already be dura..."
+            },
+            {
+              "level": 3,
+              "title": "Treat a missing acknowledgement as unknown",
+              "start_line": 373,
+              "children": [],
+              "end_line": 378,
+              "summary": "If the provider commits and the acknowledgement is lost, the graph has no local record even though the side effect may h..."
+            }
+          ],
+          "end_line": 289,
+          "summary": "A [retry](retries) re-runs the entire node function from the start. That gives at-least-once semantics for node executio..."
+        },
+        {
+          "level": 2,
+          "title": "Timeouts",
+          "start_line": 379,
+          "children": [
+            {
+              "level": 3,
+              "title": "Run timeout",
+              "start_line": 429,
+              "children": [],
+              "end_line": 458,
+              "summary": "run_timeout is a hard wall-clock cap on a single attempt. It is never refreshed, regardless of node activity: runTimeout..."
+            },
+            {
+              "level": 3,
+              "title": "Idle timeout",
+              "start_line": 459,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Progress signals",
+                  "start_line": 493,
+                  "children": [],
+                  "end_line": 513,
+                  "summary": "Under the default refresh_on=\"auto\", the idle clock resets on any of the following: - State writes via CONFIG_KEY_SEND -..."
+                },
+                {
+                  "level": 4,
+                  "title": "Heartbeat mode",
+                  "start_line": 514,
+                  "children": [],
+                  "end_line": 539,
+                  "summary": "Set refresh_on=\"heartbeat\" to narrow the refresh source to explicit runtime.heartbeat() calls only. This is useful when ..."
+                },
+                {
+                  "level": 4,
+                  "title": "Manual heartbeats",
+                  "start_line": 540,
+                  "children": [],
+                  "end_line": 608,
+                  "summary": "For long-running work that doesn't naturally emit progress signals, call runtime.heartbeat() to manually reset the idle ..."
+                }
+              ],
+              "end_line": 492,
+              "summary": "idle_timeout is a progress-resetting cap. It fires only when the node stops making observable progress for the specified..."
+            },
+            {
+              "level": 3,
+              "title": "NodeTimeoutError",
+              "start_line": 609,
+              "children": [],
+              "end_line": 661,
+              "summary": "When a timeout fires, LangGraph raises @[NodeTimeoutError] with structured context about which limit was hit: | Attribut..."
+            },
+            {
+              "level": 3,
+              "title": "Dynamic timeouts with Send",
+              "start_line": 662,
+              "children": [],
+              "end_line": 697,
+              "summary": "When using @[Send] to dispatch nodes dynamically (for example, in map-reduce patterns), you can pass a timeout directly ..."
+            }
+          ],
+          "end_line": 428,
+          "summary": "Requires langgraph>=1.2. The timeout= parameter on @[add_node] caps how long a single node attempt may run. Pass a numbe..."
+        },
+        {
+          "level": 2,
+          "title": "Error handling",
+          "start_line": 698,
+          "children": [
+            {
+              "level": 3,
+              "title": "NodeError",
+              "start_line": 803,
+              "children": [],
+              "end_line": 850,
+              "summary": "Error handlers receive failure context through a typed error: NodeError parameter, injected by type annotation (the same..."
+            },
+            {
+              "level": 3,
+              "title": "Route with Command",
+              "start_line": 851,
+              "children": [],
+              "end_line": 952,
+              "summary": "Error handlers can return a @[Command] to update state and route to a specific node, enabling Saga / compensation patter..."
+            },
+            {
+              "level": 3,
+              "title": "Resume-safe failures",
+              "start_line": 953,
+              "children": [],
+              "end_line": 958,
+              "summary": "Failure provenance is checkpointed. If the graph is interrupted or the process crashes after a node fails but before the..."
+            },
+            {
+              "level": 3,
+              "title": "Behavior with `interrupt()`",
+              "start_line": 959,
+              "children": [],
+              "end_line": 964,
+              "summary": "interrupt() raised inside a node is not routed to the error handler. Interrupts use the GraphBubbleUp mechanism to pause..."
+            },
+            {
+              "level": 3,
+              "title": "Subgraph failures",
+              "start_line": 965,
+              "children": [],
+              "end_line": 968,
+              "summary": "If a node wraps a subgraph and the subgraph raises an unhandled exception, that exception surfaces to the parent node. I..."
+            }
+          ],
+          "end_line": 802,
+          "summary": "Requires langgraph>=1.2. Requires @langchain/langgraph>=1.4.0. An error handler runs after a node fails and all retries ..."
+        },
+        {
+          "level": 2,
+          "title": "Recovery strategies",
+          "start_line": 969,
+          "children": [
+            {
+              "level": 3,
+              "title": "LLM-recoverable errors",
+              "start_line": 981,
+              "children": [],
+              "end_line": 994,
+              "summary": "When a tool call or parse fails in a way the model can correct, catch that error in the node, write it into state, and r..."
+            },
+            {
+              "level": 3,
+              "title": "Unexpected errors",
+              "start_line": 995,
+              "children": [],
+              "end_line": 1008,
+              "summary": "Do not catch failures you cannot handle. Without a matching retry policy or error handler, the exception bubbles up and ..."
+            }
+          ],
+          "end_line": 980,
+          "summary": "Retries and error handlers cover automatic re-attempts and compensation after exhaustion. Two other common patterns live..."
+        },
+        {
+          "level": 2,
+          "title": "Graph defaults",
+          "start_line": 1009,
+          "children": [
+            {
+              "level": 3,
+              "title": "Precedence",
+              "start_line": 1045,
+              "children": [],
+              "end_line": 1059,
+              "summary": "Per-node values passed directly to add_node() always override the defaults set by set_node_defaults(). Defaults are reso..."
+            },
+            {
+              "level": 3,
+              "title": "Default error handler",
+              "start_line": 1060,
+              "children": [],
+              "end_line": 1125,
+              "summary": "The error_handler default is particularly valuable when every graph run maps to an external process (for example a backg..."
+            },
+            {
+              "level": 3,
+              "title": "Applicability matrix",
+              "start_line": 1126,
+              "children": [],
+              "end_line": 1136,
+              "summary": "Not all defaults apply to all node types. Error-handler nodes (those registered via add_node(error_handler=...)) are exc..."
+            },
+            {
+              "level": 3,
+              "title": "Scope",
+              "start_line": 1137,
+              "children": [],
+              "end_line": 1144,
+              "summary": "Defaults set on a parent graph are not inherited by subgraphs. Each graph maintains its own defaults."
+            }
+          ],
+          "end_line": 1044,
+          "summary": "Requires langgraph>=1.2. Instead of repeating the same retry_policy=, error_handler=, timeout=, or cache_policy= on ever..."
+        },
+        {
+          "level": 2,
+          "title": "Graph defaults",
+          "start_line": 1145,
+          "children": [
+            {
+              "level": 3,
+              "title": "Precedence",
+              "start_line": 1176,
+              "children": [],
+              "end_line": 1190,
+              "summary": "Per-node values passed directly to addNode() always override defaults set by setNodeDefaults(). Defaults are resolved at..."
+            },
+            {
+              "level": 3,
+              "title": "Default error handler",
+              "start_line": 1191,
+              "children": [],
+              "end_line": 1228,
+              "summary": "The errorHandler default is particularly valuable when every graph run maps to an external process (for example a backgr..."
+            },
+            {
+              "level": 3,
+              "title": "Applicability matrix",
+              "start_line": 1229,
+              "children": [],
+              "end_line": 1239,
+              "summary": "Not all defaults apply to all node types. Error-handler nodes (those registered via addNode(..., { errorHandler })) are ..."
+            },
+            {
+              "level": 3,
+              "title": "Scope",
+              "start_line": 1240,
+              "children": [],
+              "end_line": 1245,
+              "summary": "Defaults set on a parent graph are not inherited by subgraphs. Each graph maintains its own defaults."
+            }
+          ],
+          "end_line": 1175,
+          "summary": "Requires @langchain/langgraph>=1.4.0. Instead of repeating the same retryPolicy, errorHandler, timeout, or cachePolicy o..."
+        },
+        {
+          "level": 2,
+          "title": "Graceful shutdown",
+          "start_line": 1246,
+          "children": [
+            {
+              "level": 3,
+              "title": "Semantics",
+              "start_line": 1304,
+              "children": [],
+              "end_line": 1327,
+              "summary": "Drain is cooperative and operates between supersteps, never preempting work that is already running: | Scenario | Behavi..."
+            },
+            {
+              "level": 3,
+              "title": "Resume after drain",
+              "start_line": 1328,
+              "children": [],
+              "end_line": 1345,
+              "summary": "Resume a drained run with invoke(None, config) using the same thread_id: Resume a drained run with invoke(null, config) ..."
+            },
+            {
+              "level": 3,
+              "title": "Read drain state inside a node",
+              "start_line": 1346,
+              "children": [],
+              "end_line": 1375,
+              "summary": "Access drain state through the runtime parameter to adjust node behavior before the superstep boundary is reached:"
+            },
+            {
+              "level": 3,
+              "title": "SIGTERM hook pattern",
+              "start_line": 1376,
+              "children": [],
+              "end_line": 1427,
+              "summary": "The recommended pattern for handling process shutdown:"
+            }
+          ],
+          "end_line": 1303,
+          "summary": "Cooperative shutdown lets you stop an in-flight graph run after the current superstep completes and save a resumable che..."
+        },
+        {
+          "level": 2,
+          "title": "Limitations",
+          "start_line": 1428,
+          "children": [],
+          "end_line": 1442,
+          "summary": "- Timeouts are async-only: sync nodes with a timeout are rejected at compile time. - One handler per node: each node can..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:functional-api",
+      "kind": "official_doc",
+      "title": "Functional API overview",
+      "description": "Wrap other frameworks with entrypoints and tasks for LangSmith Agent Server. Covers checkpointing, resume rules, and common pitfalls.",
+      "path": "repos/docs/src/oss/langgraph/functional-api.mdx",
+      "total_lines": 542,
+      "tree": [
+        {
+          "level": 2,
+          "title": "When to use the Functional API",
+          "start_line": 35,
+          "children": [],
+          "end_line": 43,
+          "summary": "| Build | Use | | --- | --- | | New LangGraph agents and workflows | [Graph API](/oss/langgraph/graph-api) | | Existing ..."
+        },
+        {
+          "level": 2,
+          "title": "Entrypoint",
+          "start_line": 44,
+          "children": [
+            {
+              "level": 3,
+              "title": "Definition",
+              "start_line": 54,
+              "children": [],
+              "end_line": 89,
+              "summary": "Pass a [checkpointer](/oss/langgraph/persistence) when you need persistence or human-in-the-loop. Identify each run with..."
+            },
+            {
+              "level": 3,
+              "title": "Run and resume",
+              "start_line": 90,
+              "children": [],
+              "end_line": 109,
+              "summary": "Call invoke or ainvoke for a final result. For streams, see [Streaming](/oss/langgraph/streaming). Call invoke for a fin..."
+            },
+            {
+              "level": 3,
+              "title": "Short-term memory",
+              "start_line": 110,
+              "children": [],
+              "end_line": 121,
+              "summary": "When an entrypoint has a checkpointer, successive invocations on the same thread id store state in [checkpoints](/oss/la..."
+            },
+            {
+              "level": 3,
+              "title": "Injectable parameters",
+              "start_line": 122,
+              "children": [],
+              "end_line": 160,
+              "summary": "You can skip this until you add [memory](/oss/langgraph/add-memory) or [custom streaming](/oss/langgraph/streaming). Whe..."
+            }
+          ],
+          "end_line": 53,
+          "summary": "The @entrypoint decorator creates a workflow from a function. It manages long-running work and [interrupts](/oss/langgra..."
+        },
+        {
+          "level": 2,
+          "title": "Task",
+          "start_line": 161,
+          "children": [
+            {
+              "level": 3,
+              "title": "Definition",
+              "start_line": 168,
+              "children": [],
+              "end_line": 192,
+              "summary": "Define tasks with the @task decorator: Define tasks with the task function:"
+            },
+            {
+              "level": 3,
+              "title": "Execution",
+              "start_line": 193,
+              "children": [],
+              "end_line": 215,
+              "summary": "Call tasks only from an entrypoint, another task, or a [Graph API node](/oss/langgraph/graph-apinodes). Do not call them..."
+            },
+            {
+              "level": 3,
+              "title": "When to use a task",
+              "start_line": 216,
+              "children": [],
+              "end_line": 225,
+              "summary": "Use tasks when you need:  Checkpointing: Save a long-running result so resume does not recompute it.  Human-in-the-loop:..."
+            }
+          ],
+          "end_line": 167,
+          "summary": "A task is a discrete unit of work (for example, an API call or data step). Tasks have two key properties:  Concurrent ex..."
+        },
+        {
+          "level": 2,
+          "title": "Resume and checkpointing",
+          "start_line": 226,
+          "children": [
+            {
+              "level": 3,
+              "title": "Serialization",
+              "start_line": 230,
+              "children": [],
+              "end_line": 246,
+              "summary": "Two rules apply when a checkpointer is configured: 1. entrypoint inputs and outputs must be JSON-serializable. 2. task o..."
+            },
+            {
+              "level": 3,
+              "title": "Determinism",
+              "start_line": 247,
+              "children": [],
+              "end_line": 262,
+              "summary": "Resume does not continue from the exact line where execution stopped. Execution returns to a checkpoint boundary and rep..."
+            },
+            {
+              "level": 3,
+              "title": "Idempotency",
+              "start_line": 263,
+              "children": [],
+              "end_line": 268,
+              "summary": "Idempotency means running the same operation more than once has the same effect as running it once. Place API calls and ..."
+            }
+          ],
+          "end_line": 229,
+          "summary": "Resume replay depends on serialization, determinism, and idempotency."
+        },
+        {
+          "level": 2,
+          "title": "Pause for human review",
+          "start_line": 269,
+          "children": [],
+          "end_line": 292,
+          "summary": "This workflow writes an essay and [interrupts](/oss/langgraph/interrupts) for human review: Invoke with a topic such as ..."
+        },
+        {
+          "level": 2,
+          "title": "Common pitfalls",
+          "start_line": 293,
+          "children": [
+            {
+              "level": 3,
+              "title": "Handling side effects",
+              "start_line": 295,
+              "children": [],
+              "end_line": 387,
+              "summary": "Put side effects (writing a file, sending an email) in tasks so resume does not run them again. The file write runs in t..."
+            },
+            {
+              "level": 3,
+              "title": "Non-deterministic control flow",
+              "start_line": 388,
+              "children": [],
+              "end_line": 534,
+              "summary": "Encapsulate time and randomness in tasks so resume returns the same values.  In a task: Get random number (5) → interrup..."
+            }
+          ],
+          "end_line": 294,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "Learn more",
+          "start_line": 535,
+          "children": [],
+          "end_line": 542,
+          "summary": "- [Deploy other frameworks](/langsmith/deploy-other-frameworks) - [Graph API overview](/oss/langgraph/graph-api) - [Inte..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:graph-api-control-flow",
+      "kind": "official_doc",
+      "title": "Build sequences, branches, and loops",
+      "description": "Compose sequences, parallel branches, conditional edges, and loops with the LangGraph Graph API.",
+      "path": "repos/docs/src/oss/langgraph/graph-api-control-flow.mdx",
+      "total_lines": 728,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Create a sequence of steps",
+          "start_line": 61,
+          "children": [],
+          "end_line": 232,
+          "summary": "Prerequisites This guide assumes familiarity with [Define and update state](/oss/langgraph/graph-api-state). This sectio..."
+        },
+        {
+          "level": 2,
+          "title": "Create branches",
+          "start_line": 233,
+          "children": [
+            {
+              "level": 3,
+              "title": "Run graph nodes in parallel",
+              "start_line": 237,
+              "children": [],
+              "end_line": 333,
+              "summary": "This example fans out from Node A to B and C, then fans in to D. The state uses a [reducer](/oss/langgraph/graph-apiredu..."
+            },
+            {
+              "level": 3,
+              "title": "Defer node execution",
+              "start_line": 334,
+              "children": [],
+              "end_line": 409,
+              "summary": "Deferring node execution delays a node until all other pending tasks are completed. This matters when branches have diff..."
+            },
+            {
+              "level": 3,
+              "title": "Conditional branching",
+              "start_line": 410,
+              "children": [],
+              "end_line": 470,
+              "summary": "Route to different nodes at runtime from state. Node a updates state, then a conditional edge chooses b or c:"
+            }
+          ],
+          "end_line": 236,
+          "summary": "Parallel node execution speeds up graph runs. LangGraph fans out and fans in with standard edges and @[conditional_edges..."
+        },
+        {
+          "level": 2,
+          "title": "Create and control loops",
+          "start_line": 471,
+          "children": [
+            {
+              "level": 3,
+              "title": "Impose a recursion limit",
+              "start_line": 572,
+              "children": [],
+              "end_line": 675,
+              "summary": "When a termination condition is not guaranteed, set the graph's [recursion limit](/oss/langgraph/graph-apirecursion-limi..."
+            },
+            {
+              "level": 3,
+              "title": "Access and handle the recursion counter",
+              "start_line": 676,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Handle recursion with RemainingSteps",
+                  "start_line": 683,
+                  "children": [],
+                  "end_line": 704,
+                  "summary": "RemainingSteps is a Python-only managed value for how many steps remain before the recursion limit. Use it to route to a..."
+                }
+              ],
+              "end_line": 682,
+              "summary": "Nodes can read the current step from run metadata. Use that to react before the limit is hit."
+            }
+          ],
+          "end_line": 571,
+          "summary": "A loop needs a way to stop. The usual pattern is a [conditional edge](/oss/langgraph/graph-apiconditional-edges) that ro..."
+        },
+        {
+          "level": 2,
+          "title": "Async",
+          "start_line": 705,
+          "children": [],
+          "end_line": 720,
+          "summary": "Async helps when [IO-bound](https://en.wikipedia.org/wiki/I/O_bound) work can run concurrently. To convert a sync graph ..."
+        },
+        {
+          "level": 2,
+          "title": "See also",
+          "start_line": 721,
+          "children": [],
+          "end_line": 728,
+          "summary": "- [Graph API overview](/oss/langgraph/graph-api) - [Use Send and Command](/oss/langgraph/graph-api-send-command) - [Conf..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:graph-api-nodes",
+      "kind": "official_doc",
+      "title": "Configure nodes",
+      "description": "Add runtime configuration, retry policies, timeouts, error handling, defaults, and caching to LangGraph nodes.",
+      "path": "repos/docs/src/oss/langgraph/graph-api-nodes.mdx",
+      "total_lines": 434,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Add runtime configuration",
+          "start_line": 36,
+          "children": [],
+          "end_line": 117,
+          "summary": "Pass values into a run (for example, which LLM or system prompt to use) without putting those values in graph state. To ..."
+        },
+        {
+          "level": 2,
+          "title": "Add retry policies",
+          "start_line": 118,
+          "children": [],
+          "end_line": 176,
+          "summary": "Attach a retry policy when a node calls an API, database, or LLM that can fail transiently. Pass retry_policy to @[add_n..."
+        },
+        {
+          "level": 2,
+          "title": "Set node timeouts",
+          "start_line": 177,
+          "children": [],
+          "end_line": 208,
+          "summary": "Requires langgraph>=1.2. Pass timeout to @[add_node] to cap how long a single async node attempt may run. Use a number (..."
+        },
+        {
+          "level": 2,
+          "title": "Handle node errors",
+          "start_line": 209,
+          "children": [],
+          "end_line": 234,
+          "summary": "Requires langgraph>=1.2. Pass error_handler to @[add_node] to run a function after a node fails and all retries are exha..."
+        },
+        {
+          "level": 2,
+          "title": "Set graph-wide node defaults",
+          "start_line": 235,
+          "children": [],
+          "end_line": 264,
+          "summary": "Requires langgraph>=1.2. Use @[set_node_defaults] to set retry_policy, timeout, cache_policy, or error_handler once for ..."
+        },
+        {
+          "level": 2,
+          "title": "Access execution info inside a node",
+          "start_line": 265,
+          "children": [
+            {
+              "level": 4,
+              "title": "Access thread and run IDs",
+              "start_line": 280,
+              "children": [],
+              "end_line": 285,
+              "summary": "Use execution_info to access the thread ID, run ID, and other identity fields inside a node:"
+            },
+            {
+              "level": 4,
+              "title": "Adjust behavior based on retry state",
+              "start_line": 286,
+              "children": [],
+              "end_line": 307,
+              "summary": "When a node has a retry policy, use execution_info to inspect the current attempt number and switch to a fallback after ..."
+            },
+            {
+              "level": 4,
+              "title": "Access thread and run IDs",
+              "start_line": 308,
+              "children": [],
+              "end_line": 313,
+              "summary": "Use executionInfo to access the thread ID, run ID, and other identity fields inside a node:"
+            },
+            {
+              "level": 4,
+              "title": "Adjust behavior based on retry state",
+              "start_line": 314,
+              "children": [],
+              "end_line": 322,
+              "summary": "When a node has a retry policy, use executionInfo to inspect the current attempt number and switch to a fallback after t..."
+            }
+          ],
+          "end_line": 279,
+          "summary": "Access execution identity and retry information via runtime.execution_info. This surfaces thread, run, and checkpoint id..."
+        },
+        {
+          "level": 2,
+          "title": "Access server info inside a node",
+          "start_line": 323,
+          "children": [],
+          "end_line": 360,
+          "summary": "When your graph runs on LangSmith Agent Server, you can access server-specific metadata via runtime.server_info. This su..."
+        },
+        {
+          "level": 2,
+          "title": "Access drain state inside a node",
+          "start_line": 361,
+          "children": [],
+          "end_line": 392,
+          "summary": "When a [graceful shutdown](/oss/langgraph/fault-tolerancegraceful-shutdown) has been requested, runtime.drain_requested ..."
+        },
+        {
+          "level": 2,
+          "title": "Add node caching",
+          "start_line": 393,
+          "children": [],
+          "end_line": 427,
+          "summary": "Use node caching when a step is expensive and you want to reuse results for the same input. To enable caching: 1. Pass a..."
+        },
+        {
+          "level": 2,
+          "title": "See also",
+          "start_line": 428,
+          "children": [],
+          "end_line": 434,
+          "summary": "- [Graph API](/oss/langgraph/graph-apinodes) - [Control flow](/oss/langgraph/graph-api-control-flow) - [Fault tolerance]..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:graph-api-send-command",
+      "kind": "official_doc",
+      "title": "Use Send and Command",
+      "description": "Build map-reduce workflows with Send and combine state updates with routing using Command in LangGraph.",
+      "path": "repos/docs/src/oss/langgraph/graph-api-send-command.mdx",
+      "total_lines": 319,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Use Send for map-reduce",
+          "start_line": 30,
+          "children": [],
+          "end_line": 125,
+          "summary": "Return one or more Send objects from a [conditional edge](/oss/langgraph/graph-apiconditional-edges). Each Send names a ..."
+        },
+        {
+          "level": 2,
+          "title": "Combine control flow and state updates with Command",
+          "start_line": 126,
+          "children": [
+            {
+              "level": 3,
+              "title": "Navigate to a node in a parent graph",
+              "start_line": 237,
+              "children": [],
+              "end_line": 284,
+              "summary": "From a node inside a [subgraph](/oss/langgraph/use-subgraphs), route to a node in the parent graph with graph=Command.PA..."
+            },
+            {
+              "level": 3,
+              "title": "Use inside tools",
+              "start_line": 285,
+              "children": [],
+              "end_line": 306,
+              "summary": "Return Command(update=...) from a tool to write graph state (for example, customer lookup results) during a turn. The fr..."
+            }
+          ],
+          "end_line": 236,
+          "summary": "Return a @[Command] from a node when that step must both update state and choose what runs next. For routing alone, pref..."
+        },
+        {
+          "level": 2,
+          "title": "Resume after an interrupt",
+          "start_line": 307,
+          "children": [],
+          "end_line": 312,
+          "summary": "Use Command as input to invoke / stream only to resume after an [interrupt](/oss/langgraph/interrupts) (resume=..., opti..."
+        },
+        {
+          "level": 2,
+          "title": "See also",
+          "start_line": 313,
+          "children": [],
+          "end_line": 319,
+          "summary": "- [Send](/oss/langgraph/graph-apisend) and [Command](/oss/langgraph/graph-apicommand) on the Graph API overview - [Inter..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:graph-api-state",
+      "kind": "official_doc",
+      "title": "Define and update state",
+      "description": "Define graph state schemas, reducers, messages, and private state in the LangGraph Graph API.",
+      "path": "repos/docs/src/oss/langgraph/graph-api-state.mdx",
+      "total_lines": 614,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Define state",
+          "start_line": 63,
+          "children": [],
+          "end_line": 88,
+          "summary": "[State](/oss/langgraph/graph-apistate) in LangGraph can be a TypedDict, Pydantic model, or dataclass. The examples below..."
+        },
+        {
+          "level": 2,
+          "title": "Update state",
+          "start_line": 89,
+          "children": [],
+          "end_line": 215,
+          "summary": "Build a graph with a single [node](/oss/langgraph/graph-apinodes). The node is a Python function that reads graph state ..."
+        },
+        {
+          "level": 2,
+          "title": "Process state updates with reducers",
+          "start_line": 216,
+          "children": [
+            {
+              "level": 3,
+              "title": "MessagesState",
+              "start_line": 265,
+              "children": [],
+              "end_line": 292,
+              "summary": "In practice, lists of messages need more than plain concatenation:  Update an existing message in the state by ID.  Acce..."
+            },
+            {
+              "level": 3,
+              "title": "MessagesValue",
+              "start_line": 293,
+              "children": [],
+              "end_line": 313,
+              "summary": "In practice, lists of messages need more than plain concatenation:  Update an existing message in the state by ID.  Acce..."
+            }
+          ],
+          "end_line": 264,
+          "summary": "Each key in the state can have its own [reducer](/oss/langgraph/graph-apireducers) function, which controls how updates ..."
+        },
+        {
+          "level": 2,
+          "title": "Resetting a reducer field",
+          "start_line": 314,
+          "children": [],
+          "end_line": 343,
+          "summary": "A common source of confusion with reducers is that with a merging reducer, returning an empty value does not clear the f..."
+        },
+        {
+          "level": 2,
+          "title": "Bypass reducers with `Overwrite`",
+          "start_line": 344,
+          "children": [],
+          "end_line": 385,
+          "summary": "In some cases, you may want to bypass a reducer and directly overwrite a state value. When a node returns a value wrappe..."
+        },
+        {
+          "level": 2,
+          "title": "Define input and output schemas",
+          "start_line": 386,
+          "children": [],
+          "end_line": 411,
+          "summary": "By default, StateGraph operates with a single schema, and all nodes communicate using that schema. You can also define d..."
+        },
+        {
+          "level": 2,
+          "title": "Pass private state between nodes",
+          "start_line": 412,
+          "children": [],
+          "end_line": 453,
+          "summary": "Nodes sometimes need intermediate data that should not appear in the graph's main input or output schema. Keep that data..."
+        },
+        {
+          "level": 2,
+          "title": "Private channels and streaming",
+          "start_line": 454,
+          "children": [],
+          "end_line": 492,
+          "summary": "Input, output, and private schemas constrain what each node reads and what invoke returns. They do not hide channels fro..."
+        },
+        {
+          "level": 2,
+          "title": "Use pydantic models for graph state",
+          "start_line": 493,
+          "children": [],
+          "end_line": 550,
+          "summary": "A @[StateGraph] accepts a @[state_schema] argument that specifies the shape of the state nodes can access and update. Mo..."
+        },
+        {
+          "level": 2,
+          "title": "Alternative state definitions",
+          "start_line": 551,
+          "children": [
+            {
+              "level": 3,
+              "title": "Channels API",
+              "start_line": 555,
+              "children": [],
+              "end_line": 577,
+              "summary": "The channels API provides low-level control over state management. LangGraph provides several built-in channel types: | ..."
+            },
+            {
+              "level": 3,
+              "title": "Annotation.Root",
+              "start_line": 578,
+              "children": [],
+              "end_line": 583,
+              "summary": "Annotation.Root provides a declarative way to define state with reducers. It is similar to StateSchema but uses a differ..."
+            },
+            {
+              "level": 3,
+              "title": "Zod objects with Zod v3",
+              "start_line": 584,
+              "children": [],
+              "end_line": 589,
+              "summary": "When using Zod v3, you can define state with plain z.object() schemas. LangGraph extends Zod v3 with a .langgraph plugin..."
+            },
+            {
+              "level": 3,
+              "title": "Zod objects with Zod v4",
+              "start_line": 590,
+              "children": [],
+              "end_line": 595,
+              "summary": "Zod v4 uses a registry-based approach. Use the LangGraph registry to attach metadata to schema fields:"
+            },
+            {
+              "level": 3,
+              "title": "Comparison table",
+              "start_line": 596,
+              "children": [],
+              "end_line": 606,
+              "summary": "| Approach | Reducers | Type Safety | Zod Version | Recommended | |----------|----------|-------------|-------------|---..."
+            }
+          ],
+          "end_line": 554,
+          "summary": "Prefer StateSchema for new graphs. LangGraph also supports the approaches below for legacy code and advanced channel con..."
+        },
+        {
+          "level": 2,
+          "title": "See also",
+          "start_line": 607,
+          "children": [],
+          "end_line": 614,
+          "summary": " [Graph API overview](/oss/langgraph/graph-apistate)  [Working with messages in graph state](/oss/langgraph/graph-apiwor..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:graph-api-visualize",
+      "kind": "official_doc",
+      "title": "Visualize your graph",
+      "description": "Render LangGraph graphs as Mermaid diagrams or PNG images for debugging and documentation.",
+      "path": "repos/docs/src/oss/langgraph/graph-api-visualize.mdx",
+      "total_lines": 161,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Mermaid",
+          "start_line": 37,
+          "children": [],
+          "end_line": 90,
+          "summary": "Call draw_mermaid() on the drawable graph to get Mermaid syntax. Paste the string into any Mermaid renderer, or keep it ..."
+        },
+        {
+          "level": 2,
+          "title": "PNG",
+          "start_line": 91,
+          "children": [],
+          "end_line": 155,
+          "summary": "Render the same graph as a .png with one of three approaches:  Mermaid.ink API (default; no extra packages)  Mermaid + P..."
+        },
+        {
+          "level": 2,
+          "title": "See also",
+          "start_line": 156,
+          "children": [],
+          "end_line": 161,
+          "summary": " [Graph API overview](/oss/langgraph/graph-api)  [Use the Graph API](/oss/langgraph/use-graph-api)  [LangSmith Studio](/..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:graph-api",
+      "kind": "official_doc",
+      "title": "Graph API overview",
+      "description": "Learn how LangGraph models agent workflows as graphs of shared state, nodes, and edges.",
+      "path": "repos/docs/src/oss/langgraph/graph-api.mdx",
+      "total_lines": 667,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Graphs",
+          "start_line": 51,
+          "children": [
+            {
+              "level": 3,
+              "title": "Super-steps",
+              "start_line": 63,
+              "children": [],
+              "end_line": 72,
+              "summary": "LangGraph runs graphs with [message passing](https://en.wikipedia.org/wiki/Message_passing), in the style of Google's [P..."
+            },
+            {
+              "level": 3,
+              "title": "StateGraph",
+              "start_line": 73,
+              "children": [],
+              "end_line": 76,
+              "summary": "@[StateGraph] is the main graph builder. Parameterize it with your state schema."
+            },
+            {
+              "level": 3,
+              "title": "Compiling your graph",
+              "start_line": 77,
+              "children": [],
+              "end_line": 90,
+              "summary": "Build a graph by defining [state](state), adding [nodes](nodes) and [edges](edges), then compiling. Compilation checks t..."
+            }
+          ],
+          "end_line": 62,
+          "summary": "LangGraph models agent workflows as graphs built from three parts: 1. [State](state): A shared snapshot of the applicati..."
+        },
+        {
+          "level": 2,
+          "title": "State",
+          "start_line": 91,
+          "children": [
+            {
+              "level": 3,
+              "title": "Schema",
+              "start_line": 121,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Multiple schemas",
+                  "start_line": 125,
+                  "children": [],
+                  "end_line": 135,
+                  "summary": "Most graphs share one state schema. Use multiple schemas when you need either of the following: - Private channels that ..."
+                }
+              ],
+              "end_line": 124,
+              "summary": "By default, the graph input and output schemas match the full state. You can narrow them when some keys are internal onl..."
+            },
+            {
+              "level": 3,
+              "title": "Reducers",
+              "start_line": 136,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Reducer arguments",
+                  "start_line": 140,
+                  "children": [],
+                  "end_line": 174,
+                  "summary": "A reducer is a binary function: - Left: The current value in state for that key - Right: The update returned by a node f..."
+                },
+                {
+                  "level": 4,
+                  "title": "Default reducer",
+                  "start_line": 175,
+                  "children": [],
+                  "end_line": 180,
+                  "summary": "The default reducer replaces the left value with the right. Nodes return partial updates, not the full state. For exampl..."
+                },
+                {
+                  "level": 4,
+                  "title": "Custom reducers",
+                  "start_line": 181,
+                  "children": [],
+                  "end_line": 196,
+                  "summary": "Use a custom reducer to combine values, such as appending to a list. Here foo overwrites. bar appends with operator.add...."
+                },
+                {
+                  "level": 4,
+                  "title": "Overwrite",
+                  "start_line": 197,
+                  "children": [],
+                  "end_line": 206,
+                  "summary": "To bypass a merging reducer and replace a value (including clearing it), use [Overwrite](https://reference.langchain.com..."
+                },
+                {
+                  "level": 4,
+                  "title": "Resetting a reducer field",
+                  "start_line": 207,
+                  "children": [],
+                  "end_line": 211,
+                  "summary": "With a merging reducer, returning an empty value keeps prior data. That matters for error buffers or retry counters that..."
+                }
+              ],
+              "end_line": 139,
+              "summary": "Reducers control how node updates merge into state. Each key has its own reducer. With no reducer, updates overwrite the..."
+            },
+            {
+              "level": 3,
+              "title": "Untracked values",
+              "start_line": 212,
+              "children": [],
+              "end_line": 221,
+              "summary": "UntrackedValue holds data during a run but never writes it to checkpoints. On resume, those values reset. Use it for con..."
+            },
+            {
+              "level": 3,
+              "title": "Type utilities",
+              "start_line": 222,
+              "children": [],
+              "end_line": 233,
+              "summary": "TypeScript helpers for typing nodes and routers: - GraphNode: Type a node function (optionally with Command destinations..."
+            },
+            {
+              "level": 3,
+              "title": "Working with messages in graph state",
+              "start_line": 234,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Why use messages?",
+                  "start_line": 236,
+                  "children": [],
+                  "end_line": 239,
+                  "summary": "Chat models take a list of messages as input. LangChain's [chat model interface](/oss/langchain/models) accepts message ..."
+                },
+                {
+                  "level": 4,
+                  "title": "Using messages in your graph",
+                  "start_line": 240,
+                  "children": [],
+                  "end_line": 255,
+                  "summary": "Store conversation history as a list of messages in state, with a reducer that appends new messages and updates existing..."
+                },
+                {
+                  "level": 4,
+                  "title": "Serialization",
+                  "start_line": 256,
+                  "children": [],
+                  "end_line": 284,
+                  "summary": "Message reducers also deserialize common wire formats into LangChain message objects. Access attributes with dot notatio..."
+                },
+                {
+                  "level": 4,
+                  "title": "MessagesState",
+                  "start_line": 285,
+                  "children": [],
+                  "end_line": 291,
+                  "summary": "MessagesState is a prebuilt state with a single messages key that uses @[add_messages]. Subclass it to add fields:"
+                }
+              ],
+              "end_line": 235,
+              "summary": ""
+            }
+          ],
+          "end_line": 120,
+          "summary": "State is the shared data that nodes read and update. LangGraph stores that data in channels: named slots in the state sc..."
+        },
+        {
+          "level": 2,
+          "title": "Nodes",
+          "start_line": 292,
+          "children": [
+            {
+              "level": 3,
+              "title": "Re-execution and idempotency",
+              "start_line": 334,
+              "children": [],
+              "end_line": 343,
+              "summary": "With a [checkpointer](/oss/langgraph/persistence), LangGraph saves checkpoints at [super-step](super-steps) boundaries, ..."
+            },
+            {
+              "level": 3,
+              "title": "Choose the unit of work",
+              "start_line": 344,
+              "children": [],
+              "end_line": 358,
+              "summary": "A [node](nodes) is a checkpoint and retry boundary. It is also where the graph can take a different path. Deterministic ..."
+            },
+            {
+              "level": 3,
+              "title": "Using tasks in nodes",
+              "start_line": 359,
+              "children": [],
+              "end_line": 362,
+              "summary": "When one node runs several operations that should checkpoint independently, wrap each operation in a [task](/oss/langgra..."
+            },
+            {
+              "level": 3,
+              "title": "`START` node",
+              "start_line": 363,
+              "children": [],
+              "end_line": 374,
+              "summary": "@[START] is the virtual entry that delivers user input into the graph. Use it to mark which nodes run first."
+            },
+            {
+              "level": 3,
+              "title": "`END` node",
+              "start_line": 375,
+              "children": [],
+              "end_line": 386,
+              "summary": "END marks a terminal edge. Use it when a path should stop."
+            },
+            {
+              "level": 3,
+              "title": "Node caching",
+              "start_line": 387,
+              "children": [],
+              "end_line": 392,
+              "summary": "LangGraph can cache node (and task) results by input. Pass a cache when you compile the graph, and attach a @[CachePolic..."
+            }
+          ],
+          "end_line": 333,
+          "summary": "Nodes are sync or async functions that implement a step of the graph. A node can accept: 1. state: The graph [state](sta..."
+        },
+        {
+          "level": 2,
+          "title": "Edges",
+          "start_line": 393,
+          "children": [
+            {
+              "level": 3,
+              "title": "Normal edges",
+              "start_line": 408,
+              "children": [],
+              "end_line": 419,
+              "summary": "If you always want to go from node A to node B, use @[add_edge]:"
+            },
+            {
+              "level": 3,
+              "title": "Conditional edges",
+              "start_line": 420,
+              "children": [],
+              "end_line": 439,
+              "summary": "If you want to optionally route to one or more nodes (or terminate), use @[add_conditional_edges]. Pass the source node ..."
+            },
+            {
+              "level": 3,
+              "title": "Entry point",
+              "start_line": 440,
+              "children": [],
+              "end_line": 451,
+              "summary": "The entry point is the first node (or nodes) that run when the graph starts. Add an edge from the virtual @[START] node ..."
+            },
+            {
+              "level": 3,
+              "title": "Conditional entry point",
+              "start_line": 452,
+              "children": [],
+              "end_line": 465,
+              "summary": "A conditional entry point lets you start at different nodes depending on custom logic. Use @[add_conditional_edges] from..."
+            }
+          ],
+          "end_line": 407,
+          "summary": "Edges decide where control goes next: - Normal edges: Always go from one node to the next - Conditional edges: Call a fu..."
+        },
+        {
+          "level": 2,
+          "title": "`Send`",
+          "start_line": 466,
+          "children": [],
+          "end_line": 485,
+          "summary": "Use @[Send] when you need to run the same node once per item, each with its own input, and the number of items is only k..."
+        },
+        {
+          "level": 2,
+          "title": "`Command`",
+          "start_line": 486,
+          "children": [
+            {
+              "level": 3,
+              "title": "Return from nodes",
+              "start_line": 507,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "`update` and `goto`",
+                  "start_line": 509,
+                  "children": [],
+                  "end_line": 542,
+                  "summary": "Return @[Command] to update state and route in one step: Annotate the return type with the allowed destinations, for exa..."
+                },
+                {
+                  "level": 4,
+                  "title": "`graph`",
+                  "start_line": 543,
+                  "children": [],
+                  "end_line": 556,
+                  "summary": "From a [subgraph](/oss/langgraph/use-subgraphs) node, navigate to a node in the parent graph with Command.PARENT: When y..."
+                }
+              ],
+              "end_line": 508,
+              "summary": ""
+            },
+            {
+              "level": 3,
+              "title": "Input to `invoke` or `stream`",
+              "start_line": 557,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "`resume`",
+                  "start_line": 591,
+                  "children": [],
+                  "end_line": 606,
+                  "summary": "Use Command(resume=...) after an [interrupt](/oss/langgraph/interrupts). The value becomes the return value of the pause..."
+                }
+              ],
+              "end_line": 590,
+              "summary": "Command(resume=...) is the only Command pattern meant as input to invoke() / stream() (optionally with update=... while ..."
+            },
+            {
+              "level": 3,
+              "title": "Return from tools",
+              "start_line": 607,
+              "children": [],
+              "end_line": 612,
+              "summary": "Return @[Command] from tools to update state and route after the tool finishes. goto from a tool adds a dynamic edge. St..."
+            }
+          ],
+          "end_line": 506,
+          "summary": "Use @[Command] when a single step must both update state and choose what runs next. Normally those jobs are separate: a ..."
+        },
+        {
+          "level": 2,
+          "title": "Graph migrations",
+          "start_line": 613,
+          "children": [],
+          "end_line": 629,
+          "summary": "You can change a graph's nodes, edges, and state schema even when a [checkpointer](/oss/langgraph/persistence) already s..."
+        },
+        {
+          "level": 2,
+          "title": "Runtime context",
+          "start_line": 630,
+          "children": [
+            {
+              "level": 3,
+              "title": "Recursion limit",
+              "start_line": 644,
+              "children": [],
+              "end_line": 657,
+              "summary": "The recursion limit caps how many [super-steps](super-steps) one run may execute. When the limit is exceeded, LangGraph ..."
+            }
+          ],
+          "end_line": 643,
+          "summary": "Runtime context passes dependencies into nodes without putting them in graph state (for example, model name or a databas..."
+        },
+        {
+          "level": 2,
+          "title": "Learn more",
+          "start_line": 658,
+          "children": [],
+          "end_line": 667,
+          "summary": "- [Thinking in the Graph API](/oss/langgraph/thinking-in-graph-api) - [LangGraph quickstart](/oss/langgraph/quickstart) ..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:interrupts",
+      "kind": "official_doc",
+      "title": "Interrupts",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/interrupts.mdx",
+      "total_lines": 1715,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Pause using `interrupt`",
+          "start_line": 36,
+          "children": [],
+          "end_line": 84,
+          "summary": "The @[interrupt] function pauses graph execution and returns a value to the caller. When you call @[interrupt] within a ..."
+        },
+        {
+          "level": 2,
+          "title": "Resuming interrupts",
+          "start_line": 85,
+          "children": [],
+          "end_line": 146,
+          "summary": "After an interrupt pauses execution, you resume the graph by invoking it again with a Command that contains the resume v..."
+        },
+        {
+          "level": 2,
+          "title": "Define an interrupt response schema",
+          "start_line": 147,
+          "children": [],
+          "end_line": 264,
+          "summary": "The response_schema argument to @[interrupt] describes the input expected when you resume the graph. Clients can use the..."
+        },
+        {
+          "level": 2,
+          "title": "Common patterns",
+          "start_line": 265,
+          "children": [
+            {
+              "level": 3,
+              "title": "Stream with human-in-the-loop (HITL) interrupts",
+              "start_line": 275,
+              "children": [],
+              "end_line": 302,
+              "summary": "When building interactive agents with human-in-the-loop workflows, you can use [event streaming](/oss/langgraph/event-st..."
+            },
+            {
+              "level": 3,
+              "title": "Handling multiple interrupts",
+              "start_line": 303,
+              "children": [],
+              "end_line": 390,
+              "summary": "When parallel branches interrupt simultaneously (for example, fan-out to multiple nodes that each call interrupt()), you..."
+            },
+            {
+              "level": 3,
+              "title": "Approve or reject",
+              "start_line": 391,
+              "children": [],
+              "end_line": 518,
+              "summary": "One of the most common uses of interrupts is to pause before a critical action and ask for approval. For example, you mi..."
+            },
+            {
+              "level": 3,
+              "title": "Review and edit state",
+              "start_line": 519,
+              "children": [],
+              "end_line": 632,
+              "summary": "Sometimes you want to let a human review and edit part of the graph state before continuing. This is useful for correcti..."
+            },
+            {
+              "level": 3,
+              "title": "Interrupts in tools",
+              "start_line": 633,
+              "children": [],
+              "end_line": 920,
+              "summary": "You can also place interrupts directly inside tool functions. This makes the tool itself pause for approval whenever it'..."
+            },
+            {
+              "level": 3,
+              "title": "Validating human input",
+              "start_line": 921,
+              "children": [],
+              "end_line": 1018,
+              "summary": "Sometimes you need to validate input from humans and re-prompt if the value is invalid. The recommended approach is to c..."
+            }
+          ],
+          "end_line": 274,
+          "summary": "The key thing that interrupts unlock is the ability to pause execution and wait for external input. This is useful for a..."
+        },
+        {
+          "level": 2,
+          "title": "Rules of interrupts",
+          "start_line": 1019,
+          "children": [
+            {
+              "level": 3,
+              "title": "Do not wrap `interrupt` calls in try/except",
+              "start_line": 1026,
+              "children": [],
+              "end_line": 1072,
+              "summary": "The way that @[interrupt] pauses execution at the point of the call is by throwing a special exception. If you wrap the ..."
+            },
+            {
+              "level": 3,
+              "title": "Do not wrap `interrupt` calls in try/catch",
+              "start_line": 1073,
+              "children": [],
+              "end_line": 1126,
+              "summary": "The way that @[interrupt] pauses execution at the point of the call is by throwing a special exception. If you wrap the ..."
+            },
+            {
+              "level": 3,
+              "title": "Do not reorder `interrupt` calls within a node",
+              "start_line": 1127,
+              "children": [],
+              "end_line": 1232,
+              "summary": "It's common to use multiple interrupts in a single node, however this can lead to unexpected behavior if not handled car..."
+            },
+            {
+              "level": 3,
+              "title": "Do not return complex values in `interrupt` calls",
+              "start_line": 1233,
+              "children": [],
+              "end_line": 1364,
+              "summary": "Depending on which checkpointer is used, complex values may not be serializable (e.g. you can't serialize a function). T..."
+            },
+            {
+              "level": 3,
+              "title": "Side effects called before `interrupt` must be idempotent",
+              "start_line": 1365,
+              "children": [],
+              "end_line": 1545,
+              "summary": "Because interrupts work by re-running the nodes they were called from, side effects called before @[interrupt] should (i..."
+            }
+          ],
+          "end_line": 1025,
+          "summary": "When you call @[interrupt] within a node, LangGraph suspends execution by raising an exception that signals the runtime ..."
+        },
+        {
+          "level": 2,
+          "title": "Using with subgraphs called as functions",
+          "start_line": 1546,
+          "children": [],
+          "end_line": 1582,
+          "summary": "When invoking a subgraph within a node, the parent graph will resume execution from the beginning of the node where the ..."
+        },
+        {
+          "level": 2,
+          "title": "Debugging with interrupts",
+          "start_line": 1583,
+          "children": [
+            {
+              "level": 3,
+              "title": "Using LangSmith Studio",
+              "start_line": 1711,
+              "children": [],
+              "end_line": 1715,
+              "summary": "You can use [LangSmith Studio](/langsmith/studio) to set static interrupts in your graph in the UI before running the gr..."
+            }
+          ],
+          "end_line": 1710,
+          "summary": "To debug and test a graph, you can use static interrupts as breakpoints to step through the graph execution one node at ..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:local-server",
+      "kind": "official_doc",
+      "title": "Run a local server",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/local-server.mdx",
+      "total_lines": 340,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Prerequisites",
+          "start_line": 11,
+          "children": [],
+          "end_line": 16,
+          "summary": "Before you begin, ensure you have the following:  An API key for [LangSmith](https://smith.langchain.com/settings) - fre..."
+        },
+        {
+          "level": 2,
+          "title": "1. Install the LangGraph CLI",
+          "start_line": 17,
+          "children": [],
+          "end_line": 40,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "2. Create a LangGraph agent",
+          "start_line": 41,
+          "children": [],
+          "end_line": 90,
+          "summary": "Create agent code from the [new-langgraph-project-python template](https://github.com/langchain-ai/new-langgraph-project..."
+        },
+        {
+          "level": 2,
+          "title": "3. Install dependencies",
+          "start_line": 91,
+          "children": [],
+          "end_line": 115,
+          "summary": "In the root of your new LangGraph app, install the dependencies in edit mode so your local changes are used by the serve..."
+        },
+        {
+          "level": 2,
+          "title": "4. Create a `.env` file",
+          "start_line": 116,
+          "children": [],
+          "end_line": 127,
+          "summary": "You will find a .env.example in the root of your new LangGraph app. Create a .env file in the root of your new LangGraph..."
+        },
+        {
+          "level": 2,
+          "title": "5. Launch Agent server",
+          "start_line": 128,
+          "children": [],
+          "end_line": 166,
+          "summary": "Start the LangGraph API server locally: Sample output:"
+        },
+        {
+          "level": 2,
+          "title": "6. Test your agent in Studio",
+          "start_line": 167,
+          "children": [],
+          "end_line": 188,
+          "summary": "[Studio](/langsmith/studio) is a specialized UI that you can connect to LangGraph API server to visualize, interact with..."
+        },
+        {
+          "level": 2,
+          "title": "7. Test the API",
+          "start_line": 189,
+          "children": [],
+          "end_line": 327,
+          "summary": "1. Install the LangGraph Python SDK: 2. Send a message to the assistant (threadless run):"
+        },
+        {
+          "level": 2,
+          "title": "Next steps",
+          "start_line": 328,
+          "children": [],
+          "end_line": 340,
+          "summary": "Now that you have a LangGraph app running locally, take your journey further by exploring deployment and advanced featur..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:observability",
+      "kind": "official_doc",
+      "title": "LangSmith Observability",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/observability.mdx",
+      "total_lines": 198,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Prerequisites",
+          "start_line": 13,
+          "children": [],
+          "end_line": 19,
+          "summary": "Before you begin, ensure you have the following: - A LangSmith account: Sign up (for free) or log in at [smith.langchain..."
+        },
+        {
+          "level": 2,
+          "title": "Enable tracing",
+          "start_line": 20,
+          "children": [],
+          "end_line": 36,
+          "summary": "To enable tracing for your agent, set the following environment variables: Traces appear in the destination configured d..."
+        },
+        {
+          "level": 2,
+          "title": "Trace selectively",
+          "start_line": 37,
+          "children": [],
+          "end_line": 77,
+          "summary": "You may opt to trace specific invocations or parts of your agent using LangSmith's tracing_context context manager:"
+        },
+        {
+          "level": 2,
+          "title": "Select an agent and environment",
+          "start_line": 78,
+          "children": [],
+          "end_line": 85,
+          "summary": "Use LANGSMITH_AGENT_ID and LANGSMITH_AGENT_ENVIRONMENT to select the registered agent and environment. For per-request r..."
+        },
+        {
+          "level": 2,
+          "title": "Add metadata to traces",
+          "start_line": 86,
+          "children": [],
+          "end_line": 147,
+          "summary": "You can annotate your traces with custom metadata and tags:"
+        },
+        {
+          "level": 2,
+          "title": "Use anonymizers to prevent logging of sensitive data in traces",
+          "start_line": 148,
+          "children": [],
+          "end_line": 198,
+          "summary": "You may want to mask sensitive data to prevent it from being logged to LangSmith. You can create [anonymizers](/langsmit..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:overview",
+      "kind": "official_doc",
+      "title": "LangGraph overview",
+      "description": "Low-level orchestration framework and runtime for long-running, stateful agents",
+      "path": "repos/docs/src/oss/langgraph/overview.mdx",
+      "total_lines": 139,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Install",
+          "start_line": 29,
+          "children": [],
+          "end_line": 105,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "Capabilities",
+          "start_line": 106,
+          "children": [],
+          "end_line": 115,
+          "summary": "LangGraph provides the runtime primitives for stateful, long-running workflows. It does not abstract prompts or force a ..."
+        },
+        {
+          "level": 2,
+          "title": "Integrations, deployment, and observability",
+          "start_line": 116,
+          "children": [],
+          "end_line": 133,
+          "summary": "LangGraph works on its own. However, you can also pair it with other LangChain products: Integrations and agent abstract..."
+        },
+        {
+          "level": 2,
+          "title": "See also",
+          "start_line": 134,
+          "children": [],
+          "end_line": 139,
+          "summary": "- [LangGraph quickstart](/oss/langgraph/quickstart) - [Graph API overview](/oss/langgraph/graph-api) - [Frameworks, runt..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:persistence",
+      "kind": "official_doc",
+      "title": "Persistence",
+      "description": "LangGraph's persistence layer gives agents short-term memory through checkpointers and long-term memory through stores.",
+      "path": "repos/docs/src/oss/langgraph/persistence.mdx",
+      "total_lines": 125,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Quickstart",
+          "start_line": 23,
+          "children": [],
+          "end_line": 64,
+          "summary": "Compile your graph with a checkpointer, a store, or both:"
+        },
+        {
+          "level": 2,
+          "title": "Checkpointer vs. store",
+          "start_line": 65,
+          "children": [],
+          "end_line": 75,
+          "summary": "| | Checkpointer | Store | | ---- | ---- | ---- | | Persists | Graph state snapshots | Application-defined key-value dat..."
+        },
+        {
+          "level": 2,
+          "title": "Troubleshooting common issues",
+          "start_line": 76,
+          "children": [
+            {
+              "level": 3,
+              "title": "PostgresSaver: `thread_id` too long",
+              "start_line": 78,
+              "children": [],
+              "end_line": 90,
+              "summary": "When using PostgresSaver (or AsyncPostgresSaver), the thread_id is stored in a column with limited length. If your threa..."
+            },
+            {
+              "level": 3,
+              "title": "`MemorySaver` does not persist between restarts",
+              "start_line": 91,
+              "children": [],
+              "end_line": 99,
+              "summary": "MemorySaver and InMemorySaver store checkpoints in RAM. When the process restarts, all checkpoints are lost. Fix: Use a ..."
+            },
+            {
+              "level": 3,
+              "title": "Checkpoints growing unboundedly",
+              "start_line": 100,
+              "children": [],
+              "end_line": 115,
+              "summary": "Over long conversations, checkpoints accumulate. This can increase latency and storage costs. Fix: Prune old checkpoints..."
+            },
+            {
+              "level": 3,
+              "title": "State access from parent graph to subgraph",
+              "start_line": 116,
+              "children": [],
+              "end_line": 121,
+              "summary": "When a subgraph updates state, the parent graph may not see the changes immediately. This is because each subgraph manag..."
+            }
+          ],
+          "end_line": 77,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "Next steps",
+          "start_line": 122,
+          "children": [],
+          "end_line": 125,
+          "summary": "- [Use checkpointers](/oss/langgraph/checkpointers) to persist and inspect thread state. - [Use stores](/oss/langgraph/s..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:pregel",
+      "kind": "official_doc",
+      "title": "LangGraph runtime",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/pregel.mdx",
+      "total_lines": 829,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Overview",
+          "start_line": 29,
+          "children": [],
+          "end_line": 40,
+          "summary": "In LangGraph, Pregel combines [actors](https://en.wikipedia.org/wiki/Actor_model) and channels into a single application..."
+        },
+        {
+          "level": 2,
+          "title": "Actors",
+          "start_line": 41,
+          "children": [],
+          "end_line": 44,
+          "summary": "An actor is a PregelNode. It subscribes to channels, reads data from them, and writes data to them. It can be thought of..."
+        },
+        {
+          "level": 2,
+          "title": "Channels",
+          "start_line": 45,
+          "children": [
+            {
+              "level": 3,
+              "title": "LastValue",
+              "start_line": 49,
+              "children": [],
+              "end_line": 68,
+              "summary": "@[LastValue] is the default channel type. It stores the last value written to it, overwriting any previous value. Use it..."
+            },
+            {
+              "level": 3,
+              "title": "Topic",
+              "start_line": 69,
+              "children": [],
+              "end_line": 90,
+              "summary": "@[Topic] is a configurable PubSub channel useful for sending multiple values between actors or accumulating output acros..."
+            },
+            {
+              "level": 3,
+              "title": "BinaryOperatorAggregate",
+              "start_line": 91,
+              "children": [],
+              "end_line": 114,
+              "summary": "@[BinaryOperatorAggregate] stores a persistent value that is updated by applying a binary operator to the current value ..."
+            },
+            {
+              "level": 3,
+              "title": "DeltaChannel",
+              "start_line": 115,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Bulk reducer requirement",
+                  "start_line": 146,
+                  "children": [],
+                  "end_line": 195,
+                  "summary": "The reducer passed to DeltaChannel is a bulk reducer: it receives the current state and a sequence of all writes from th..."
+                },
+                {
+                  "level": 4,
+                  "title": "Use snapshot_frequency for bounded read latency",
+                  "start_line": 196,
+                  "children": [],
+                  "end_line": 209,
+                  "summary": "Without snapshots, reading a DeltaChannel value requires replaying the full write history—O(N) for a thread with N steps..."
+                },
+                {
+                  "level": 4,
+                  "title": "Version compatibility and rollbacks",
+                  "start_line": 210,
+                  "children": [],
+                  "end_line": 218,
+                  "summary": "Changing a persisted channel from DeltaChannel to a non-delta channel is not recommended. Checkpoints encode these chann..."
+                }
+              ],
+              "end_line": 145,
+              "summary": "DeltaChannel requires langgraph>=1.2 and is currently in beta. The API may change in future releases. @[DeltaChannel] st..."
+            }
+          ],
+          "end_line": 48,
+          "summary": "Channels are used to communicate between actors (PregelNodes). Each channel has a value type, an update type, and an upd..."
+        },
+        {
+          "level": 2,
+          "title": "Examples",
+          "start_line": 219,
+          "children": [],
+          "end_line": 586,
+          "summary": "While most users will interact with Pregel through the @[StateGraph][StateGraph] API or the @[@entrypoint] decorator, it..."
+        },
+        {
+          "level": 2,
+          "title": "High-level API",
+          "start_line": 587,
+          "children": [],
+          "end_line": 829,
+          "summary": "LangGraph provides two high-level APIs for creating a Pregel application: the [StateGraph (Graph API)](/oss/langgraph/gr..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:quickstart",
+      "kind": "official_doc",
+      "title": "Quickstart",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/quickstart.mdx",
+      "total_lines": 553,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Prerequisites",
+          "start_line": 25,
+          "children": [],
+          "end_line": 31,
+          "summary": "Before you begin, make sure you have an API key from a model provider (e.g., Gemini, Anthropic, OpenAI). See [chat model..."
+        },
+        {
+          "level": 2,
+          "title": "Setup",
+          "start_line": 32,
+          "children": [],
+          "end_line": 69,
+          "summary": "Install langgraph, langchain, and langchain-anthropic: Install @langchain/langgraph, @langchain/core, @langchain/anthrop..."
+        },
+        {
+          "level": 2,
+          "title": "Build the agent",
+          "start_line": 70,
+          "children": [],
+          "end_line": 84,
+          "summary": "The model can call tools, then the agent calls the model again until it returns a final answer. Create one file. Add the..."
+        },
+        {
+          "level": 2,
+          "title": "Step 1: Read the guide",
+          "start_line": 85,
+          "children": [],
+          "end_line": 91,
+          "summary": "Detect whether this project uses Python or TypeScript/JavaScript. Fetch and follow the matching page; treat it as the so..."
+        },
+        {
+          "level": 2,
+          "title": "Step 2: Install dependencies",
+          "start_line": 92,
+          "children": [],
+          "end_line": 95,
+          "summary": "Install the packages required by this quickstart with the package manager already used in this project."
+        },
+        {
+          "level": 2,
+          "title": "Step 3: Configure model credentials",
+          "start_line": 96,
+          "children": [],
+          "end_line": 99,
+          "summary": "This quickstart uses Anthropic by default. Check whether ANTHROPIC_API_KEY is set. If it is not, ask the user to create ..."
+        },
+        {
+          "level": 2,
+          "title": "Step 4: Implement the calculator agent",
+          "start_line": 100,
+          "children": [],
+          "end_line": 103,
+          "summary": "Define tools and model, then Graph API state, nodes, edges, and the compiled graph from the guide."
+        },
+        {
+          "level": 2,
+          "title": "Step 5: Optional LangSmith tracing",
+          "start_line": 104,
+          "children": [],
+          "end_line": 107,
+          "summary": "Ask the user if they want tracing. If yes, ask them to set LANGSMITH_TRACING=true and LANGSMITH_API_KEY themselves. Do n..."
+        },
+        {
+          "level": 2,
+          "title": "Step 6: Run the agent",
+          "start_line": 108,
+          "children": [],
+          "end_line": 111,
+          "summary": "Invoke the agent on a sample arithmetic query from the guide and print the final result."
+        },
+        {
+          "level": 2,
+          "title": "Rules",
+          "start_line": 112,
+          "children": [],
+          "end_line": 118,
+          "summary": "- Stay scoped to this quickstart. Do not add deployment, evals, or unrelated frameworks unless the user asks. - Prefer t..."
+        },
+        {
+          "level": 2,
+          "title": "1. Define tools and model",
+          "start_line": 119,
+          "children": [],
+          "end_line": 222,
+          "summary": "This example uses the Claude Sonnet model and defines tools for addition, multiplication, and division. Create a file fo..."
+        },
+        {
+          "level": 2,
+          "title": "2. Define state",
+          "start_line": 223,
+          "children": [],
+          "end_line": 285,
+          "summary": "The graph's state stores the messages and the number of LLM calls. Add the following below the tools and model: State in..."
+        },
+        {
+          "level": 2,
+          "title": "3. Define model node",
+          "start_line": 286,
+          "children": [],
+          "end_line": 335,
+          "summary": "The model node calls the LLM and decides whether to call a tool. Add the following below the state schema:"
+        },
+        {
+          "level": 2,
+          "title": "4. Define tool node",
+          "start_line": 336,
+          "children": [],
+          "end_line": 382,
+          "summary": "The tool node calls the tools and returns the results. Add the following below the model node:"
+        },
+        {
+          "level": 2,
+          "title": "5. Define end logic",
+          "start_line": 383,
+          "children": [],
+          "end_line": 431,
+          "summary": "The conditional edge function routes to the tool node or to the end, depending on whether the LLM made a tool call. Add ..."
+        },
+        {
+          "level": 2,
+          "title": "6. Build and compile the agent",
+          "start_line": 432,
+          "children": [],
+          "end_line": 472,
+          "summary": "Add the following below the routing function. Build the graph with @[StateGraph] and compile it with @[compile][StateGra..."
+        },
+        {
+          "level": 2,
+          "title": "7. Set up LangSmith tracing",
+          "start_line": 473,
+          "children": [],
+          "end_line": 483,
+          "summary": "[LangSmith](https://smith.langchain.com) shows tool calls and model responses as the agent runs. This step is optional. ..."
+        },
+        {
+          "level": 2,
+          "title": "8. Run the agent",
+          "start_line": 484,
+          "children": [],
+          "end_line": 542,
+          "summary": "Add the following below the compiled graph:"
+        },
+        {
+          "level": 2,
+          "title": "Next steps",
+          "start_line": 543,
+          "children": [],
+          "end_line": 553,
+          "summary": "You now have a working calculator agent. Continue with one of the following subjects: - Build with the Graph API: [Build..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:sql-agent",
+      "kind": "official_doc",
+      "title": "Build a custom SQL agent",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/sql-agent.mdx",
+      "total_lines": 406,
+      "tree": [
+        {
+          "level": 3,
+          "title": "Concepts",
+          "start_line": 43,
+          "children": [],
+          "end_line": 50,
+          "summary": "We will cover the following concepts: - [Tools](/oss/langchain/tools) for reading from SQL databases - The LangGraph [Gr..."
+        },
+        {
+          "level": 2,
+          "title": "Setup",
+          "start_line": 51,
+          "children": [
+            {
+              "level": 3,
+              "title": "Installation",
+              "start_line": 53,
+              "children": [],
+              "end_line": 75,
+              "summary": ""
+            },
+            {
+              "level": 3,
+              "title": "LangSmith",
+              "start_line": 76,
+              "children": [],
+              "end_line": 83,
+              "summary": "Set up [LangSmith](https://smith.langchain.com) to inspect what is happening inside your chain or agent. Then set the fo..."
+            }
+          ],
+          "end_line": 52,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "1. Select an LLM",
+          "start_line": 84,
+          "children": [],
+          "end_line": 96,
+          "summary": "Select a model that supports [tool-calling](/oss/integrations/providers/overview): The output shown in the examples belo..."
+        },
+        {
+          "level": 2,
+          "title": "2. Configure the database",
+          "start_line": 97,
+          "children": [],
+          "end_line": 129,
+          "summary": "You will be creating a [SQLite database](https://www.sqlitetutorial.net/sqlite-sample-database/) for this tutorial. SQLi..."
+        },
+        {
+          "level": 2,
+          "title": "3. Add tools for database interactions",
+          "start_line": 130,
+          "children": [],
+          "end_line": 165,
+          "summary": "The following database tools are minimal wrappers for demonstration purposes only. They are not intended to be secure or..."
+        },
+        {
+          "level": 2,
+          "title": "4. Define application steps",
+          "start_line": 166,
+          "children": [],
+          "end_line": 187,
+          "summary": "We construct dedicated nodes for the following steps: - Listing DB tables - Calling the \"get schema\" tool - Generating a..."
+        },
+        {
+          "level": 2,
+          "title": "5. Implement the agent",
+          "start_line": 188,
+          "children": [],
+          "end_line": 312,
+          "summary": "We can now assemble these steps into a workflow using the [Graph API](/oss/langgraph/graph-api). We define a [conditiona..."
+        },
+        {
+          "level": 2,
+          "title": "6. Implement human-in-the-loop review",
+          "start_line": 313,
+          "children": [],
+          "end_line": 404,
+          "summary": "It can be prudent to check the agent's SQL queries before they are executed for any unintended actions or inefficiencies..."
+        },
+        {
+          "level": 2,
+          "title": "Next steps",
+          "start_line": 405,
+          "children": [],
+          "end_line": 406,
+          "summary": "Check out the [Evaluate a graph](/langsmith/evaluate-graph) guide for evaluating LangGraph applications, including SQL a..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:stores",
+      "kind": "official_doc",
+      "title": "Stores",
+      "description": "LangGraph stores provide cross-thread long-term memory, complementing per-thread checkpointer persistence.",
+      "path": "repos/docs/src/oss/langgraph/stores.mdx",
+      "total_lines": 676,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Basic usage",
+          "start_line": 30,
+          "children": [],
+          "end_line": 142,
+          "summary": "The following code snippet shows the @[InMemoryStore] in isolation without using LangGraph:"
+        },
+        {
+          "level": 2,
+          "title": "Listing items in a namespace",
+          "start_line": 143,
+          "children": [],
+          "end_line": 198,
+          "summary": "Calling [store.search](https://reference.langchain.com/python/langgraph/store) (or the async [store.asearch](https://ref..."
+        },
+        {
+          "level": 2,
+          "title": "Semantic search",
+          "start_line": 199,
+          "children": [],
+          "end_line": 304,
+          "summary": "Beyond simple retrieval, the store also supports semantic search, allowing you to find memories based on meaning rather ..."
+        },
+        {
+          "level": 2,
+          "title": "Using in LangGraph",
+          "start_line": 305,
+          "children": [],
+          "end_line": 570,
+          "summary": "The store works hand-in-hand with the checkpointer: the checkpointer saves state to threads, as discussed above, and the..."
+        },
+        {
+          "level": 2,
+          "title": "Build a custom store",
+          "start_line": 571,
+          "children": [
+            {
+              "level": 3,
+              "title": "Base contract",
+              "start_line": 576,
+              "children": [],
+              "end_line": 595,
+              "summary": "All five async methods are required. Sync counterparts (put, get, delete, search, list_namespaces) are optional but reco..."
+            },
+            {
+              "level": 3,
+              "title": "Namespace design",
+              "start_line": 596,
+              "children": [],
+              "end_line": 617,
+              "summary": "Namespaces are tuples of strings, e.g. (\"user_id\", \"memories\"). Store implementations must support: - Prefix matching: a..."
+            },
+            {
+              "level": 3,
+              "title": "Serialization",
+              "start_line": 618,
+              "children": [],
+              "end_line": 621,
+              "summary": "Store values are plain Python dicts — no special serializer is required. Serialize with json.dumps / json.loads or a JSO..."
+            },
+            {
+              "level": 3,
+              "title": "Semantic search support",
+              "start_line": 622,
+              "children": [],
+              "end_line": 631,
+              "summary": "If your backend supports vector search, implement the query parameter on asearch: - Accept a query: str | None argument...."
+            },
+            {
+              "level": 3,
+              "title": "Testing",
+              "start_line": 632,
+              "children": [],
+              "end_line": 672,
+              "summary": "There is currently no conformance suite for custom stores. Test against @[InMemoryStore] as the reference:"
+            },
+            {
+              "level": 3,
+              "title": "Next steps",
+              "start_line": 673,
+              "children": [],
+              "end_line": 676,
+              "summary": "- [Add a custom store to Agent Server](/langsmith/custom-store) — deploying your implementation - [Checkpointers](/oss/l..."
+            }
+          ],
+          "end_line": 575,
+          "summary": "To use a storage backend other than the built-in implementations, subclass @[BaseStore] and implement its required metho..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:streaming",
+      "kind": "official_doc",
+      "title": "Streaming",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/streaming.mdx",
+      "total_lines": 2139,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Get started",
+          "start_line": 14,
+          "children": [
+            {
+              "level": 3,
+              "title": "Basic usage",
+              "start_line": 16,
+              "children": [],
+              "end_line": 99,
+              "summary": "LangGraph graphs expose the @[stream][Pregel.stream] (sync) and @[astream][Pregel.astream] (async) methods to yield stre..."
+            },
+            {
+              "level": 3,
+              "title": "Stream output format (v2)",
+              "start_line": 100,
+              "children": [],
+              "end_line": 157,
+              "summary": "Requires LangGraph 1.1 or later. All examples on this page use version=\"v2\". Pass version=\"v2\" to stream() or astream() ..."
+            }
+          ],
+          "end_line": 15,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "Stream modes",
+          "start_line": 158,
+          "children": [
+            {
+              "level": 3,
+              "title": "Graph state",
+              "start_line": 189,
+              "children": [],
+              "end_line": 318,
+              "summary": "Use the stream modes updates and values to stream the state of the graph as it executes.  updates streams the updates to..."
+            },
+            {
+              "level": 3,
+              "title": "LLM tokens",
+              "start_line": 319,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Filter by LLM invocation",
+                  "start_line": 430,
+                  "children": [],
+                  "end_line": 615,
+                  "summary": "You can associate tags with LLM invocations to filter the streamed tokens by LLM invocation."
+                },
+                {
+                  "level": 4,
+                  "title": "Omit messages from the stream",
+                  "start_line": 616,
+                  "children": [],
+                  "end_line": 636,
+                  "summary": "Use the nostream tag to exclude LLM output from the stream entirely. Invocations tagged with nostream still run and prod..."
+                },
+                {
+                  "level": 4,
+                  "title": "Filter by node",
+                  "start_line": 637,
+                  "children": [],
+                  "end_line": 789,
+                  "summary": "To stream tokens only from specific nodes, use stream_mode=\"messages\" and filter the outputs by the langgraph_node field..."
+                }
+              ],
+              "end_line": 429,
+              "summary": "Use the messages streaming mode to stream Large Language Model (LLM) outputs token by token from any part of your graph,..."
+            },
+            {
+              "level": 3,
+              "title": "Custom data",
+              "start_line": 790,
+              "children": [],
+              "end_line": 939,
+              "summary": "To send custom user-defined data from inside a LangGraph node or tool, follow these steps: 1. Use @[get_stream_writer] t..."
+            },
+            {
+              "level": 3,
+              "title": "Tool progress",
+              "start_line": 940,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Define tools that stream progress",
+                  "start_line": 953,
+                  "children": [],
+                  "end_line": 1000,
+                  "summary": "To emit on_tool_event events, define your tool function as an async generator (async function). Each yield sends interme..."
+                },
+                {
+                  "level": 4,
+                  "title": "Consume tool events server-side",
+                  "start_line": 1001,
+                  "children": [],
+                  "end_line": 1028,
+                  "summary": "Pass streamMode: [\"tools\"] (or combine with other modes) to graph.stream():"
+                },
+                {
+                  "level": 4,
+                  "title": "Use tool progress in React with `useStream`",
+                  "start_line": 1029,
+                  "children": [],
+                  "end_line": 1217,
+                  "summary": "The @[useStream] hook from @langchain/langgraph-sdk/react exposes a toolProgress array when you include \"tools\" in your ..."
+                },
+                {
+                  "level": 4,
+                  "title": "`tools` vs `custom` stream mode",
+                  "start_line": 1218,
+                  "children": [],
+                  "end_line": 1226,
+                  "summary": "Both stream modes can surface tool progress, but they serve different purposes:  tools—automatically emits structured li..."
+                }
+              ],
+              "end_line": 952,
+              "summary": "Use the tools stream mode to receive real-time lifecycle events for tool executions. This is useful for showing progress..."
+            },
+            {
+              "level": 3,
+              "title": "Subgraph outputs",
+              "start_line": 1227,
+              "children": [],
+              "end_line": 1465,
+              "summary": "To include outputs from [subgraphs](/oss/langgraph/use-subgraphs) in the streamed outputs, you can set subgraphs=True in..."
+            },
+            {
+              "level": 3,
+              "title": "Checkpoints",
+              "start_line": 1466,
+              "children": [],
+              "end_line": 1494,
+              "summary": "Use the checkpoints streaming mode to receive checkpoint events as the graph executes. Each checkpoint event has the sam..."
+            },
+            {
+              "level": 3,
+              "title": "Tasks",
+              "start_line": 1495,
+              "children": [],
+              "end_line": 1525,
+              "summary": "Use the tasks streaming mode to receive task start and finish events as the graph executes. Task events include informat..."
+            },
+            {
+              "level": 3,
+              "title": "Debug",
+              "start_line": 1526,
+              "children": [],
+              "end_line": 1558,
+              "summary": "Use the debug streaming mode to stream as much information as possible throughout the execution of the graph. The stream..."
+            },
+            {
+              "level": 3,
+              "title": "Multiple modes at once",
+              "start_line": 1559,
+              "children": [],
+              "end_line": 1595,
+              "summary": "You can pass a list as the stream_mode parameter to stream multiple modes at once. With version=\"v2\", every chunk is a S..."
+            }
+          ],
+          "end_line": 188,
+          "summary": "Pass one or more of the following stream modes as a list to the @[stream][CompiledStateGraph.stream] or @[astream][Compi..."
+        },
+        {
+          "level": 2,
+          "title": "Advanced",
+          "start_line": 1596,
+          "children": [
+            {
+              "level": 3,
+              "title": "Use with any LLM",
+              "start_line": 1598,
+              "children": [],
+              "end_line": 1919,
+              "summary": "You can use stream_mode=\"custom\" to stream data from any LLM API—even if that API does not implement the LangChain chat ..."
+            },
+            {
+              "level": 3,
+              "title": "Disable streaming for specific chat models",
+              "start_line": 1920,
+              "children": [],
+              "end_line": 1978,
+              "summary": "If your application mixes models that support streaming with those that do not, you may need to explicitly disable strea..."
+            },
+            {
+              "level": 3,
+              "title": "Migrate to v2",
+              "start_line": 1979,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "v2 invoke format",
+                  "start_line": 1994,
+                  "children": [],
+                  "end_line": 2034,
+                  "summary": "When you pass version=\"v2\" to invoke() or ainvoke(), it returns a @[GraphOutput] object with .value and .interrupts attr..."
+                },
+                {
+                  "level": 4,
+                  "title": "Pydantic and dataclass state coercion",
+                  "start_line": 2035,
+                  "children": [],
+                  "end_line": 2055,
+                  "summary": "When your graph state is a Pydantic model or dataclass, v2 values mode automatically coerces output to the correct type:"
+                }
+              ],
+              "end_line": 1993,
+              "summary": "The v2 streaming format (used throughout this page) provides a unified output format. Here's a summary of the key differ..."
+            },
+            {
+              "level": 3,
+              "title": "Async with Python < 3.11",
+              "start_line": 2056,
+              "children": [],
+              "end_line": 2139,
+              "summary": "In Python versions < 3.11, [asyncio tasks](https://docs.python.org/3/library/asyncio-task.htmlasyncio.create_task) do no..."
+            }
+          ],
+          "end_line": 1597,
+          "summary": ""
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:studio",
+      "kind": "official_doc",
+      "title": "LangSmith Studio",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/studio.mdx",
+      "total_lines": 244,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Prerequisites",
+          "start_line": 13,
+          "children": [],
+          "end_line": 20,
+          "summary": "Before you begin, ensure you have the following: - A LangSmith account: Sign up (for free) or log in at [smith.langchain..."
+        },
+        {
+          "level": 2,
+          "title": "Set up local Agent server",
+          "start_line": 21,
+          "children": [
+            {
+              "level": 3,
+              "title": "1. Install the LangGraph CLI",
+              "start_line": 23,
+              "children": [],
+              "end_line": 39,
+              "summary": "The [LangGraph CLI](/langsmith/cli) provides a local development server (also called [Agent Server](/langsmith/agent-ser..."
+            },
+            {
+              "level": 3,
+              "title": "2. Prepare your agent",
+              "start_line": 40,
+              "children": [],
+              "end_line": 92,
+              "summary": "If you already have a LangChain agent, you can use it directly. This example uses a simple email agent:"
+            },
+            {
+              "level": 3,
+              "title": "3. Environment variables",
+              "start_line": 93,
+              "children": [],
+              "end_line": 108,
+              "summary": "Studio requires a LangSmith API key to connect your local agent. Create a .env file in the root of your project and add ..."
+            },
+            {
+              "level": 3,
+              "title": "4. Create a LangGraph config file",
+              "start_line": 109,
+              "children": [],
+              "end_line": 171,
+              "summary": "The LangGraph CLI uses a configuration file to locate your agent and manage dependencies. Create a langgraph.json file i..."
+            },
+            {
+              "level": 3,
+              "title": "5. Install dependencies",
+              "start_line": 172,
+              "children": [],
+              "end_line": 192,
+              "summary": "Install your project dependencies from the root directory:"
+            },
+            {
+              "level": 3,
+              "title": "6. View your agent in Studio",
+              "start_line": 193,
+              "children": [],
+              "end_line": 231,
+              "summary": "Start the development server to connect your agent to Studio: Safari blocks localhost connections to Studio. To work aro..."
+            }
+          ],
+          "end_line": 22,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "Video guide",
+          "start_line": 232,
+          "children": [],
+          "end_line": 244,
+          "summary": "className=\"w-full aspect-video rounded-xl\" src=\"https://www.youtube.com/embed/Mi1gSlHwZLM?si=zA47TNuTC5aH0ahd\" title=\"St..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:test",
+      "kind": "official_doc",
+      "title": "Test",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/test.mdx",
+      "total_lines": 312,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Prerequisites",
+          "start_line": 17,
+          "children": [],
+          "end_line": 34,
+          "summary": "First, make sure you have [pytest](https://docs.pytest.org/) installed: First, make sure you have [vitest](https://vites..."
+        },
+        {
+          "level": 2,
+          "title": "Getting started",
+          "start_line": 35,
+          "children": [],
+          "end_line": 110,
+          "summary": "Because many LangGraph agents depend on state, a useful pattern is to create your graph before each test where you use i..."
+        },
+        {
+          "level": 2,
+          "title": "Testing individual nodes and edges",
+          "start_line": 111,
+          "children": [],
+          "end_line": 186,
+          "summary": "Compiled LangGraph agents expose references to each individual node as graph.nodes. You can take advantage of this to te..."
+        },
+        {
+          "level": 2,
+          "title": "Partial execution",
+          "start_line": 187,
+          "children": [],
+          "end_line": 312,
+          "summary": "For agents made up of larger graphs, you may wish to test partial execution paths within your agent rather than the enti..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:thinking-in-graph-api",
+      "kind": "official_doc",
+      "title": "Thinking in the Graph API",
+      "description": "Learn how to design agents with the LangGraph Graph API using nodes, edges, and shared state.",
+      "path": "repos/docs/src/oss/langgraph/thinking-in-graph-api.mdx",
+      "total_lines": 385,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Start with the process you want to automate",
+          "start_line": 22,
+          "children": [],
+          "end_line": 45,
+          "summary": "Imagine that you need to build an AI agent that handles customer support emails. Your product team has given you these r..."
+        },
+        {
+          "level": 2,
+          "title": "Step 1: Map out your workflow as discrete steps",
+          "start_line": 46,
+          "children": [],
+          "end_line": 67,
+          "summary": "Start by identifying the distinct steps in your process. Each step becomes a node (a function that does one specific thi..."
+        },
+        {
+          "level": 2,
+          "title": "Step 2: Identify what each step needs to do",
+          "start_line": 68,
+          "children": [
+            {
+              "level": 3,
+              "title": "LLM steps",
+              "start_line": 87,
+              "children": [],
+              "end_line": 104,
+              "summary": "When a step needs to understand, analyze, generate text, or make reasoning decisions: - Static context (prompt): Classif..."
+            },
+            {
+              "level": 3,
+              "title": "Data steps",
+              "start_line": 105,
+              "children": [],
+              "end_line": 116,
+              "summary": "When a step needs to retrieve information from external sources: - Parameters: Query built from intent and topic - Retry..."
+            },
+            {
+              "level": 3,
+              "title": "Action steps",
+              "start_line": 117,
+              "children": [],
+              "end_line": 134,
+              "summary": "When a step needs to perform an external action: - When to execute: After approval (human or automated) - Retry strategy..."
+            },
+            {
+              "level": 3,
+              "title": "User input steps",
+              "start_line": 135,
+              "children": [],
+              "end_line": 147,
+              "summary": "When a step needs human intervention: - Context for decision: Original email, draft response, urgency, classification - ..."
+            }
+          ],
+          "end_line": 86,
+          "summary": "For each node from Step 1, decide what kind of work it is and what context it needs. Use the categories below, then expa..."
+        },
+        {
+          "level": 2,
+          "title": "Step 3: Design your state",
+          "start_line": 148,
+          "children": [
+            {
+              "level": 3,
+              "title": "What belongs in state?",
+              "start_line": 152,
+              "children": [],
+              "end_line": 173,
+              "summary": "Ask yourself these questions about each piece of data: Does it need to persist across steps? If yes, it goes in state. C..."
+            },
+            {
+              "level": 3,
+              "title": "Keep state raw, format prompts on demand",
+              "start_line": 174,
+              "children": [],
+              "end_line": 199,
+              "summary": "Store raw data in state, not formatted prompt text. Format prompts inside nodes when you need them. That separation mean..."
+            }
+          ],
+          "end_line": 151,
+          "summary": "State is the shared [memory](/oss/concepts/memory) accessible to all nodes in your agent. Think of it as the notebook yo..."
+        },
+        {
+          "level": 2,
+          "title": "Step 4: Build your nodes",
+          "start_line": 200,
+          "children": [
+            {
+              "level": 3,
+              "title": "Handle errors appropriately",
+              "start_line": 210,
+              "children": [],
+              "end_line": 233,
+              "summary": "Before you fill in node bodies, consider how each node can fail. Attach retries on nodes that call external APIs. Use in..."
+            },
+            {
+              "level": 3,
+              "title": "Implementing the email agent nodes",
+              "start_line": 234,
+              "children": [],
+              "end_line": 255,
+              "summary": "Turn each unit of work into a node. Each node reads the shared state, does one piece of work, and returns updates. When ..."
+            }
+          ],
+          "end_line": 209,
+          "summary": "A node is a Python function that takes the current state and returns updates to it. When the node also chooses the next ..."
+        },
+        {
+          "level": 2,
+          "title": "Step 5: Wire it together",
+          "start_line": 256,
+          "children": [
+            {
+              "level": 3,
+              "title": "Try out your agent",
+              "start_line": 274,
+              "children": [],
+              "end_line": 291,
+              "summary": "After the graph is compiled, invoke it with a sample email. With the placeholder classifier above, this urgent billing m..."
+            }
+          ],
+          "end_line": 273,
+          "summary": "Connect the nodes into a graph. Because routing lives inside Command nodes, you only need a few fixed edges. Compile wit..."
+        },
+        {
+          "level": 2,
+          "title": "Summary and next steps",
+          "start_line": 292,
+          "children": [
+            {
+              "level": 3,
+              "title": "Key insights",
+              "start_line": 294,
+              "children": [],
+              "end_line": 323,
+              "summary": "Building this email agent shows the Graph API way of thinking: Each node does one thing well. Node boundaries are where ..."
+            },
+            {
+              "level": 3,
+              "title": "Node granularity trade-offs",
+              "start_line": 324,
+              "children": [],
+              "end_line": 340,
+              "summary": "Most applications can use the breakdown above. Read this section when you are deciding whether to merge or split nodes. ..."
+            },
+            {
+              "level": 3,
+              "title": "Where to go from here",
+              "start_line": 341,
+              "children": [],
+              "end_line": 385,
+              "summary": "This walkthrough introduces Graph API design. Extend it with the how-tos and related guides: Decision guide for state, c..."
+            }
+          ],
+          "end_line": 293,
+          "summary": ""
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:ui",
+      "kind": "official_doc",
+      "title": "Agent Chat UI",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/ui.mdx",
+      "total_lines": 23,
+      "tree": [
+        {
+          "level": 3,
+          "title": "Connect to your agent",
+          "start_line": 9,
+          "children": [],
+          "end_line": 23,
+          "summary": "Agent Chat UI can connect to both [local](/oss/langgraph/studioset-up-local-agent-server) and [deployed agents](/oss/lan..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:use-graph-api",
+      "kind": "official_doc",
+      "title": "Build checklist for the Graph API",
+      "description": "Decide state, control flow, Send, Command, and node options as you build with the Graph API.",
+      "path": "repos/docs/src/oss/langgraph/use-graph-api.mdx",
+      "total_lines": 146,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Build your graph",
+          "start_line": 20,
+          "children": [],
+          "end_line": 136,
+          "summary": "Work through these decisions in order. Each step includes a short example and links to the how-to for full recipes. Deci..."
+        },
+        {
+          "level": 2,
+          "title": "Next steps",
+          "start_line": 137,
+          "children": [],
+          "end_line": 146,
+          "summary": "- [Thinking in the Graph API](/oss/langgraph/thinking-in-graph-api): Design walkthrough with the email agent - [Graph AP..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:use-subgraphs",
+      "kind": "official_doc",
+      "title": "Subgraphs",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/use-subgraphs.mdx",
+      "total_lines": 1589,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Setup",
+          "start_line": 15,
+          "children": [],
+          "end_line": 40,
+          "summary": ""
+        },
+        {
+          "level": 2,
+          "title": "Define subgraph communication",
+          "start_line": 41,
+          "children": [
+            {
+              "level": 3,
+              "title": "Call a subgraph inside a node",
+              "start_line": 51,
+              "children": [],
+              "end_line": 431,
+              "summary": "When the parent graph and subgraph have different state schemas (no shared keys), invoke the subgraph inside a node func..."
+            },
+            {
+              "level": 3,
+              "title": "Add a subgraph as a node",
+              "start_line": 432,
+              "children": [],
+              "end_line": 614,
+              "summary": "When the parent graph and subgraph share state keys, you can pass a compiled subgraph directly to add_node. No wrapper f..."
+            }
+          ],
+          "end_line": 50,
+          "summary": "When adding subgraphs, you need to define how the parent graph and the subgraph communicate: | Pattern | When to use | S..."
+        },
+        {
+          "level": 2,
+          "title": "Subgraph persistence",
+          "start_line": 615,
+          "children": [
+            {
+              "level": 3,
+              "title": "Stateful",
+              "start_line": 637,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Per-invocation (default)",
+                  "start_line": 641,
+                  "children": [],
+                  "end_line": 915,
+                  "summary": "This is the recommended mode for most applications, including [multi-agent](/oss/langchain/multi-agent) systems where su..."
+                },
+                {
+                  "level": 4,
+                  "title": "Per-thread",
+                  "start_line": 916,
+                  "children": [],
+                  "end_line": 1215,
+                  "summary": "Use per-thread persistence when a subagent needs to remember previous interactions. For example, a research assistant th..."
+                }
+              ],
+              "end_line": 640,
+              "summary": "Stateful subgraphs inherit the parent graph's checkpointer, which enables [interrupts](/oss/langgraph/interrupts), [pers..."
+            },
+            {
+              "level": 3,
+              "title": "Stateless",
+              "start_line": 1216,
+              "children": [],
+              "end_line": 1237,
+              "summary": "Use this when you want to run a subagent like a plain function call with no checkpointing overhead. The subgraph cannot ..."
+            },
+            {
+              "level": 3,
+              "title": "Checkpointer reference",
+              "start_line": 1238,
+              "children": [],
+              "end_line": 1268,
+              "summary": "Control subgraph persistence with the checkpointer parameter on .compile(): | Feature | Per-invocation (default) | Per-t..."
+            }
+          ],
+          "end_line": 636,
+          "summary": "When you use a subgraph, you need to decide what happens to its internal data between calls. Consider a customer support..."
+        },
+        {
+          "level": 2,
+          "title": "View subgraph state",
+          "start_line": 1269,
+          "children": [],
+          "end_line": 1428,
+          "summary": "When you enable [persistence](/oss/langgraph/persistence), you can inspect the subgraph state using the subgraphs option..."
+        },
+        {
+          "level": 2,
+          "title": "Stream subgraph outputs",
+          "start_line": 1429,
+          "children": [],
+          "end_line": 1589,
+          "summary": "To observe nested graph executions, we recommend [event streaming](/oss/langgraph/event-streaming): the stream.subgraphs..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:use-time-travel",
+      "kind": "official_doc",
+      "title": "Use time-travel",
+      "description": "Replay past executions and fork to explore alternative paths in LangGraph",
+      "path": "repos/docs/src/oss/langgraph/use-time-travel.mdx",
+      "total_lines": 511,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Overview",
+          "start_line": 7,
+          "children": [],
+          "end_line": 15,
+          "summary": "LangGraph supports time travel through [checkpoints](/oss/langgraph/checkpointerscheckpoints): - [Replay](replay): Retry..."
+        },
+        {
+          "level": 2,
+          "title": "Replay",
+          "start_line": 16,
+          "children": [],
+          "end_line": 122,
+          "summary": "Invoke the graph with a prior checkpoint's config to replay from that point. Replay re-executes nodes—it doesn't just re..."
+        },
+        {
+          "level": 2,
+          "title": "Fork",
+          "start_line": 123,
+          "children": [
+            {
+              "level": 3,
+              "title": "From a specific node",
+              "start_line": 174,
+              "children": [],
+              "end_line": 213,
+              "summary": "When you call @[update_state], values are applied using the specified node's writers (including [reducers](/oss/langgrap..."
+            }
+          ],
+          "end_line": 173,
+          "summary": "Fork creates a new branch from a past checkpoint with modified state. Call @[update_state] on a prior checkpoint to crea..."
+        },
+        {
+          "level": 2,
+          "title": "Interrupts",
+          "start_line": 214,
+          "children": [
+            {
+              "level": 3,
+              "title": "Multiple interrupts",
+              "start_line": 307,
+              "children": [],
+              "end_line": 350,
+              "summary": "If your graph collects input at several points (for example, a multi-step form), you can fork from between the interrupt..."
+            }
+          ],
+          "end_line": 306,
+          "summary": "If your graph uses @[interrupt] for [human-in-the-loop](/oss/langgraph/interrupts) workflows, interrupts are always re-t..."
+        },
+        {
+          "level": 2,
+          "title": "Subgraphs",
+          "start_line": 351,
+          "children": [],
+          "end_line": 511,
+          "summary": "Time travel with [subgraphs](/oss/langgraph/use-subgraphs) depends on whether the subgraph has its own checkpointer. Thi..."
+        }
+      ]
+    },
+    {
+      "doc_id": "doc:workflows-agents",
+      "kind": "official_doc",
+      "title": "Workflows and agents",
+      "description": "",
+      "path": "repos/docs/src/oss/langgraph/workflows-agents.mdx",
+      "total_lines": 1496,
+      "tree": [
+        {
+          "level": 2,
+          "title": "Setup",
+          "start_line": 22,
+          "children": [],
+          "end_line": 82,
+          "summary": "To build a workflow or agent, you can use [any chat model](/oss/integrations/chat) that supports structured outputs and ..."
+        },
+        {
+          "level": 2,
+          "title": "LLMs and augmentations",
+          "start_line": 83,
+          "children": [],
+          "end_line": 170,
+          "summary": "Workflows and agentic systems are based on LLMs and the various augmentations you add to them. [Tool calling](/oss/langc..."
+        },
+        {
+          "level": 2,
+          "title": "Prompt chaining",
+          "start_line": 171,
+          "children": [],
+          "end_line": 342,
+          "summary": "Prompt chaining is when each LLM call processes the output of the previous call. It's often used for performing well-def..."
+        },
+        {
+          "level": 2,
+          "title": "Parallelization",
+          "start_line": 343,
+          "children": [],
+          "end_line": 490,
+          "summary": "With parallelization, LLMs work simultaneously on a task. This is either done by running multiple independent subtasks a..."
+        },
+        {
+          "level": 2,
+          "title": "Routing",
+          "start_line": 491,
+          "children": [],
+          "end_line": 717,
+          "summary": "Routing workflows process inputs and then directs them to context-specific tasks. This allows you to define specialized ..."
+        },
+        {
+          "level": 2,
+          "title": "Orchestrator-worker",
+          "start_line": 718,
+          "children": [
+            {
+              "level": 3,
+              "title": "Creating workers in LangGraph",
+              "start_line": 773,
+              "children": [],
+              "end_line": 975,
+              "summary": "Orchestrator-worker workflows are common and LangGraph has built-in support for them. The Send API lets you dynamically ..."
+            }
+          ],
+          "end_line": 772,
+          "summary": "In an orchestrator-worker configuration, the orchestrator: - Breaks down tasks into subtasks - Delegates subtasks to wor..."
+        },
+        {
+          "level": 2,
+          "title": "Evaluator-optimizer",
+          "start_line": 976,
+          "children": [],
+          "end_line": 1147,
+          "summary": "In evaluator-optimizer workflows, one LLM call creates a response and the other evaluates that response. If the evaluato..."
+        },
+        {
+          "level": 2,
+          "title": "Agents",
+          "start_line": 1148,
+          "children": [
+            {
+              "level": 3,
+              "title": "ToolNode",
+              "start_line": 1404,
+              "children": [
+                {
+                  "level": 4,
+                  "title": "Access graph state and context from tools",
+                  "start_line": 1465,
+                  "children": [],
+                  "end_line": 1496,
+                  "summary": "Tools executed by ToolNode receive the arguments generated by the model as their first argument. To read graph-side data..."
+                }
+              ],
+              "end_line": 1464,
+              "summary": "@[ToolNode] is a prebuilt node that executes tools in LangGraph workflows. It handles parallel tool execution, error han..."
+            }
+          ],
+          "end_line": 1403,
+          "summary": "Agents are typically implemented as an LLM performing actions using [tools](/oss/langchain/tools). They operate in conti..."
+        }
+      ]
+    }
+  ]
+}
